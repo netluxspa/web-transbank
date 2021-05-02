@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import {ADD_CARRITO} from '../../actions/types';
 import api from './../../api'
 import history from '../../history'
 import './style.css'
@@ -10,11 +12,19 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 
 
 
+const addCarrito = (obj) =>{
+    console.log(obj)
+    return obj
+}
+
+
 class ProductoDetail extends React.Component {
     constructor(props){
+        console.log(props)
         super(props);
         this.state = { producto: null, imagenSelectedIndex:0, cantidad: 1}
     }
+
 
     componentDidMount(){
         this.getOneProduct(this.props.match.params.url_producto)
@@ -99,8 +109,13 @@ class ProductoDetail extends React.Component {
                                         <AddCircleIcon color="action" onClick={()=>this.addItem()} />
                                     </div>
                                     <br />
-                                    <div style={{textAlign: "center"}}>
-                                    <Button  variant='contained'  color="primary">Agregar al carrito</Button>
+                                    <div style={{textAlign: "center", display: 'grid'}}>
+                                        <div>
+                                            <Button onClick={()=>this.props.dispatch({type:ADD_CARRITO, payload: {producto: producto.id, cantidad: this.state.cantidad}})} variant='contained'  color="primary">Agregar al carrito</Button>
+                                        </div>
+                                        <div>
+                                            <Button onClick={()=>history.push('/tienda/caja')} style={{ marginTop:'10px'}} variant='outlined'  color="primary">Ir al carrito</Button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -137,4 +152,11 @@ class ProductoDetail extends React.Component {
     
 }
 
-export default ProductoDetail;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        dispatch: (obj)=> dispatch(obj)
+    }
+};
+
+
+export default connect(null,  mapDispatchToProps)(ProductoDetail);

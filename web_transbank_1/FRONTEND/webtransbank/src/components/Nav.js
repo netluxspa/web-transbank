@@ -1,6 +1,7 @@
 import React from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
+import history from '../history'
 
 
 import AppBar from '@material-ui/core/AppBar';
@@ -170,15 +171,7 @@ function Nav({productosCarrito}) {
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
-          >
             <MenuMenu />
-            {/* <MenuIcon /> */}
-          </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
             CanabikTools 
           </Typography>
@@ -198,8 +191,8 @@ function Nav({productosCarrito}) {
           </div> */}
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={productosCarrito.length} color="secondary">
+            <IconButton onClick={()=>history.push('/tienda/caja')} aria-label="show 4 new mails" color="inherit">
+              <Badge badgeContent={Object.values(productosCarrito).length} color="secondary">
                 <ShoppingCartIcon />
               </Badge>
             </IconButton>
@@ -248,7 +241,7 @@ function Nav({productosCarrito}) {
 
 const mapStateToProps = state => {
   return { 
-    productosCarrito: state.carrito.productos
+    productosCarrito: state.carrito
   };
 };
 

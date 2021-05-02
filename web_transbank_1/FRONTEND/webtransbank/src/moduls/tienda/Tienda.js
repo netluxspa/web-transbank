@@ -1,9 +1,9 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import api from './../../api'
-import CategoriasList from './CategoriasList'
 import ProductosList from './ProductoList'
 import ProductoDetail from './ProductoDetail'
+import Carrito from './carrito/Carrito';
 import history from '../../history'
 
 class Tienda extends React.Component {
@@ -83,6 +83,7 @@ class Tienda extends React.Component {
                         categoriaSelectedId={ categoriaSelected ? categoriaSelected.id : null}/>
                       } />
                     <Route path="/tienda/producto/:url_producto" exact component={ProductoDetail} /> 
+                    <Route path="/tienda/caja" exact component={Carrito} /> 
                 </div>
                 )
         } else {

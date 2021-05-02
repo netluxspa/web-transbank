@@ -1,26 +1,26 @@
-import { GET_CARRITO, ADD_CARRITO } from '../actions/types'
+import { ADD_CARRITO, REMOVE_CARRITO } from '../actions/types'
+import _ from 'lodash';
 
 // const initialState =  {
 //     productos: []
 // }
 
 const initialState = () =>{
-    if (localStorage.getItem('productos')){
-        return JSON.parse(localStorage.getItem('productos'))
-    }else{
-        return ({productos: []})
-    }
+    // if (localStorage.getItem('productos')){
+    //     return JSON.parse(localStorage.getItem('productos'))
+    // }else{
+    //     return ({productos: []})
+    // }
+    return ({})
 }
 
 const carritoReducer = (state = initialState(), action) => {
 
     switch (action.type) {
-        case GET_CARRITO:
-            return action.payload;
         case ADD_CARRITO:
-            const productos = JSON.stringify({productos: [...state.productos, action.payload]})
-            localStorage.setItem('productos', productos);
-            return  {...state, productos: [...state.productos, action.payload]} ;
+            return  {...state, [action.payload.producto]:action.payload} ;
+        case REMOVE_CARRITO:
+            return _.omit(state, action.payload);
         default:
             return state;
     }

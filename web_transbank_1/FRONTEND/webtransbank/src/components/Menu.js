@@ -11,6 +11,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
+import IconButton from '@material-ui/core/IconButton';
+
 
 
 
@@ -81,7 +83,18 @@ export default function MenuMenu() {
             color="inherit"
             aria-label="open drawer"
           ></IconButton> */}
-           <MenuIcon  onClick={toggleDrawer(anchor, true)} />
+          
+
+           <IconButton
+            onClick={toggleDrawer(anchor, true)}
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="open drawer"
+          >
+            <MenuIcon   />
+          </IconButton>
+
           <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
             {list(anchor)}
           </Drawer>
