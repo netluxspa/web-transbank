@@ -1,2 +1,18 @@
+export const ADD_PAGINA = 'ADD_PAGINA';
+
 export const ADD_CARRITO = 'ADD_CARRITO';
 export const REMOVE_CARRITO = 'REMOVE_CARRITO';
+
+export const ADD_ENVIO = 'ADD_ENVIO';
+
+export const ADD_USER_PAGINA = 'ADD_USER_PAGINA';
+export const REMOVE_USER_PAGINA = 'REMOVE_USER_PAGINA';
+
+export const ADD_ADMIN_PAGINA = 'ADD_ADMIN_PAGINA';
+export const REMOVE_ADMIN_PAGINA = 'REMOVE_ADMIN_PAGINA';
+
+
+
+
+
+

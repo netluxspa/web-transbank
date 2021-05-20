@@ -2,6 +2,8 @@ from django.db import models
 from pag.models import Pagina
 from django.core.validators import MinValueValidator
 import uuid
+from django_cryptography.fields import encrypt
+from pag.models import UserPagina
 
 def scramble_uploaded_filename(instanece, filename):
     extension = filename.split(".")[-1]
@@ -13,6 +15,9 @@ def scramble_uploaded_filename(instanece, filename):
 class Tienda(models.Model):
     pagina = models.OneToOneField(Pagina, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=50)
+    descripcion = models.TextField(null=True, blank=True)
+    codigo_comercio = encrypt(models.CharField(max_length=200, default='597055555532'))
+    llave_secreta = encrypt(models.CharField(max_length=200, default='579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C'))
 
 
 class Categoria(models.Model):
@@ -54,16 +59,37 @@ class Producto(models.Model):
     def __str__(self):
         return self.titulo
 
+class Transaction(models.Model):
+    vci = models.CharField(max_length=50)
+    amount = models.CharField(max_length=50)
+    status = models.CharField(max_length=50)
+    buy_order = models.CharField(max_length=50) 
+    session_id = models.CharField(max_length=50)
+    card_detail = models.CharField(max_length=50)
+    accounting_date = models.CharField(max_length=50)
+    transaction_date = models.CharField(max_length=50)
+    authorization_code = models.CharField(max_length=50)
+    payment_type_code = models.CharField(max_length=50)
+    response_code = models.CharField(max_length=50)
+    installments_number = models.CharField(max_length=50)
+    
 
 class Pedido(models.Model):
+    tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
+    userPagina = models.ForeignKey(UserPagina, on_delete=models.CASCADE)
     fecha = models.DateField(auto_now_add=True)
     codigo_seguimiento = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4)
     productos = models.ManyToManyField(Producto, through='ProductosPedido', blank=True)
+    transaction = models.OneToOneField(Transaction, null=True, blank=True, on_delete=models.SET_NULL)
+
+
 
 class ProductosPedido(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     pedido = models.ForeignKey(Pedido, null=True, blank=True, on_delete=models.CASCADE)
     cantidad = models.IntegerField(default=1, validators=[MinValueValidator(1)])
+    precio_pedido = models.IntegerField()
 
-
-  
+    def save(self, *args, **kwargs):
+        self.precio_pedido = self.producto.precio
+        super(ProductosPedido, self).save(*args, **kwargs)

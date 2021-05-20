@@ -2,7 +2,7 @@ import React from 'react';
 import Album from '../../globalComponents/Album'
 
 
-const ProductosList = ({productos, categoriaSelectedId, categorias, selectCategoria}) => {
+const ProductosList = ({productos, categoriaSelectedId, categorias, tienda, selectCategoria}) => {
 
 
 
@@ -17,6 +17,7 @@ const ProductosList = ({productos, categoriaSelectedId, categorias, selectCatego
 
     return (
         <Album 
+            tienda={tienda}
             productos={renderProducts(productos)} 
             selectCategoria={(c)=>selectCategoria(c)}
             categoriaSelectedId = {categoriaSelectedId}

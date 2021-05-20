@@ -1,0 +1,29 @@
+.contSeguimientoSearch{
+    padding:0 120px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.contSeguimientoSearch > .titulo{
+    grid-column: 1;
+}
+.contSeguimientoSearch > .searchBox{
+    grid-column: 1;}
+.contSeguimientoSearch > .goSearch{
+    display: flex;
+    align-items: center;
+    grid-column: 1;}
+
+
+.contSeguimientoSearch > .searchBox > * {
+    width: 100%;
+}
+
+@media (max-width: 760px){
+    .contSeguimientoSearch{
+        padding:0 20px;
+    }
+    
+}

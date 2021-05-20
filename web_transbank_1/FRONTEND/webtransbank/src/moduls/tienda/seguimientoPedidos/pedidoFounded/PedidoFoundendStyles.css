@@ -1,0 +1,75 @@
+.contPedidoFounded{
+    margin:auto;
+    padding:  50px 80px;
+    font-size: 0.7em;
+   
+}
+
+.contPedidoFounded > div {
+    border-radius: 4px;
+    padding: 40px;
+    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+}
+
+.contPedidosGrid{
+    display: grid;
+}
+
+.contPedidosGrid > div{
+    padding: 10px;
+}
+
+.contPedidosGrid .header{
+    font-weight: 500;
+}
+
+.contPedidosGrid .reverseHeader{
+    border-top: solid 1px gray;
+    font-weight: 500;
+}
+
+.contPedidosGrid .supraHeader {
+
+}
+
+.contPedidosGrid  .supraHeaderPedido{
+    grid-column: 1/3;    
+}
+
+.contPedidosGrid  .supraHeaderProductos{
+    grid-column: 1/5;    
+}
+
+.contPedidosGrid  .supraHeaderPago{
+    grid-column: 1/3;    
+}
+
+.contInfoPedido{
+    grid-template-columns: 1fr 1fr;
+}
+
+.contInfoProductos {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.contInfoPago {
+    grid-template-columns: 1fr 1fr;
+}
+
+.contPedidosGrid > .line_bottom {
+    border-bottom: solid 1px gray;
+}
+
+.alignRight{
+    text-align: right;
+}
+
+@media (max-width: 760px){
+    .contPedidoFounded{
+        padding:  30px 15px;
+    }
+    .contPedidoFounded > div {
+        padding: 10px;
+    }
+}
+

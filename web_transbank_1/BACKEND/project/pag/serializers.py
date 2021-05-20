@@ -5,4 +5,23 @@ from .models import *
 class PaginaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pagina
-        fields = '__all__'
+        fields = ('codigo',)
+
+
+class UserPaginaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPagina
+        fields = ('id', 'nombre', 'pagina', 'password', 'email')
+        extra_kwargs = {
+        'password': {'write_only': True}
+        }
+
+
+class AdminPaginaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdminPagina
+        fields = ('id', 'nombre', 'password', 'email')
+        extra_kwargs = {
+        'password': {'write_only': True}
+        }
+

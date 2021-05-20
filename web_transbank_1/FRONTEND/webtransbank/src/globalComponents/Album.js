@@ -17,6 +17,8 @@ import history from '../history'
 import {ADD_CARRITO} from '../actions/types'
 import { useDispatch } from 'react-redux';
 
+import Modal from '../components/modal/Modal'
+
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -52,7 +54,9 @@ const useStyles = makeStyles((theme) => ({
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-export default function Album({productos, categorias, selectCategoria, categoriaSelectedId}) {
+function Album({productos, categorias, selectCategoria, tienda, categoriaSelectedId}) {
+
+  const [openModal, setOpenModal] = React.useState(false)
 
   const dispatch = useDispatch()
 
@@ -65,15 +69,18 @@ export default function Album({productos, categorias, selectCategoria, categoria
         {/* Hero unit */}
         <div  className={classes.heroContent}>
           <Container maxWidth="sm">
-            <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-              Album layout
-            </Typography>
-            <Typography variant="h5" align="center" color="textSecondary" paragraph>
-              Something short and leading about the collection below—its contents, the creator, etc.
-              Make it short and sweet, but not too short so folks don&apos;t simply skip over it
-              entirely.
-            </Typography>
-            <div  className={classes.heroButtons}>
+            <div style={{ padding:"20px", borderRadius: "4px", position: "relative"}}>
+              <div onClick={()=>history.push('/admin/tienda')} style={{height: "20px", width: "20px", background: "black", position: "absolute", right: "10px", top: "10px", zIndex: "10", borderRadius: "4px"}}></div>
+              <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+                {tienda.titulo}
+              </Typography>
+              <Typography variant="h5" align="center" color="textSecondary" paragraph>
+                {tienda.descripcion}
+              </Typography>
+            </div>
+            <div style={{ padding:"20px", borderRadius: "4px", position: "relative"}}  className={classes.heroButtons}>
+            <div style={{height: "20px", width: "20px", background: "black", position: "absolute", right: "10px", top: "10px", zIndex: "10", borderRadius: "4px"}}></div>
+
               <Grid container spacing={2} justify="center">
               <Grid  item> 
                     <Button onClick={()=>selectCategoria(null)} 
@@ -110,7 +117,9 @@ export default function Album({productos, categorias, selectCategoria, categoria
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
-          <Grid container spacing={4}>
+          <Grid style={{ padding:"20px", borderRadius: "4px", position: "relative"}} container spacing={4}>
+          <div style={{height: "20px", width: "20px", background: "black", position: "absolute", right: "10px", top: "10px", zIndex: "10", borderRadius: "4px"}}></div>
+
             {productos.map((card) => (
               <Grid item key={card.id} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
@@ -128,7 +137,7 @@ export default function Album({productos, categorias, selectCategoria, categoria
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button onClick={()=>dispatch({type: ADD_CARRITO, payload: {producto: card.id, cantidad: 1}})} size="small" color="primary">
+                    <Button onClick={()=>dispatch({type: ADD_CARRITO, payload: {producto: card.id,  titulo: card.titulo, precio:card.precio,  cantidad: 1}})} size="small" color="primary">
                       Agregar
                     </Button>
                     {/* <Button onClick={()=>console.log(card)} size="small" color="primary">
@@ -144,6 +153,11 @@ export default function Album({productos, categorias, selectCategoria, categoria
           </Grid>
         </Container>
       </main>
+      {openModal ? <Modal></Modal> : null}
     </React.Fragment>
   );
 }
+
+
+
+export default  Album;

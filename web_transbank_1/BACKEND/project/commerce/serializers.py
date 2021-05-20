@@ -5,7 +5,7 @@ from .models import *
 class TiendaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tienda
-        fields = '__all__'
+        fields = ('id', 'pagina', 'titulo', 'descripcion' )
 
 
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -41,6 +41,12 @@ class ProductoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ProductoResumeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producto
+        fields = ('id', 'titulo',)
+
+
 class ProductosPedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductosPedido
@@ -49,15 +55,19 @@ class ProductosPedidoSerializer(serializers.ModelSerializer):
 
 
 class ProductoPedidoSerializer(serializers.ModelSerializer):
-    producto = ProductoSerializer(many=False, read_only=True)
+    producto = ProductoResumeSerializer(many=False, read_only=True)
     class Meta:
         model = ProductosPedido
         fields = '__all__'
 
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = '__all__'
 
 
-
-class PedidoSerializer(serializers.ModelSerializer):    
+class PedidoSerializer(serializers.ModelSerializer):   
+    transaction =  TransactionSerializer(many=False, read_only=True)
     productos = ProductoPedidoSerializer(source='productospedido_set', many=True, required=False)
     class Meta:
         model = Pedido

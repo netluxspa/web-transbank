@@ -36,7 +36,7 @@ class ProductoCarrito extends React.Component {
 
     addItem = () =>{
         this.setState({cantidad: this.state.cantidad + 1})
-        this.props.dispatch({type: ADD_CARRITO, payload: {producto: this.state.producto.id, cantidad: this.state.cantidad +1}})
+        this.props.dispatch({type: ADD_CARRITO, payload: {producto: this.state.producto.id, titulo: this.state.producto.titulo, precio: this.state.producto.precio, cantidad: this.state.cantidad +1}})
     }
 
 
@@ -44,7 +44,7 @@ class ProductoCarrito extends React.Component {
         if (this.state.cantidad > 1){
             this.setState({cantidad: this.state.cantidad -1})
             console.log(this.state)
-            this.props.dispatch({type: ADD_CARRITO, payload: {producto: this.state.producto.id, cantidad: this.state.cantidad -1}})
+            this.props.dispatch({type: ADD_CARRITO, payload: {producto: this.state.producto.id, titulo: this.state.producto.titulo, precio: this.state.producto.precio, cantidad: this.state.cantidad -1}})
         }
     }
 
@@ -68,13 +68,13 @@ class ProductoCarrito extends React.Component {
                         </span>
                     </div>
                     <div className='precio'>
-                        <span style={{padding: "0 10px"}}>
+                        <span style={{padding: "0 10px", whiteSpace: "nowrap"}}>
                             CLP $ {producto.precio}
                         </span>
                     </div>
                     <div className='cantidad'>
                         <RemoveCircleIcon  color={`${this.state.cantidad > 1 ? 'action': 'disabled'}`} onClick={()=>this.removeItem()} />
-                            <p style={{padding:"0 10px"}}>{cantidad}</p>
+                            <p style={{padding:"0 10px", whiteSpace: "nowrap"}}>{cantidad}</p>
                         <AddCircleIcon  color="action" onClick={()=>this.addItem()} />
                     </div>
                     <div className='ver'>

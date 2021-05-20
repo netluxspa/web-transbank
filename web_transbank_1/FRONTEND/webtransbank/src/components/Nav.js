@@ -21,6 +21,8 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import MenuMenu from './Menu'
 
+import { logout } from '../actions/userPagina'
+
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -85,16 +87,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Nav({productosCarrito}) {
+function Nav({productosCarrito, userPagina, logout}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
+
+
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+
+
   const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+    if (userPagina){
+      setAnchorEl(event.currentTarget);
+    }
+
   };
 
   const handleMobileMenuClose = () => {
@@ -111,20 +120,24 @@ function Nav({productosCarrito}) {
   };
 
   const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
+  const renderMenu =  (
+
+        <Menu
+              anchorEl={anchorEl}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              id={menuId}
+              keepMounted
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              open={isMenuOpen}
+              onClose={handleMenuClose}
+            >
+                { userPagina ?  <MenuItem>{ userPagina.nombre}</MenuItem> : null}
+                { userPagina ? <MenuItem onClick={()=>logout()}> Cerrar sesión</MenuItem> : null}
+
+            </Menu>
+      );
+
+    
 
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
@@ -230,7 +243,7 @@ function Nav({productosCarrito}) {
           </div>
         </Toolbar>
       </AppBar>
-      {renderMobileMenu}
+      { renderMobileMenu}
       {renderMenu}
     </div>
   );
@@ -241,12 +254,13 @@ function Nav({productosCarrito}) {
 
 const mapStateToProps = state => {
   return { 
-    productosCarrito: state.carrito
+    productosCarrito: state.carrito,
+    userPagina: state.userPagina
   };
 };
 
 
 export default connect(
   mapStateToProps,
-  {  }
+  { logout }
 )(Nav);

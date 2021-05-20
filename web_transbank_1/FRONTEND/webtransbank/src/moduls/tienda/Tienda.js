@@ -4,6 +4,11 @@ import api from './../../api'
 import ProductosList from './ProductoList'
 import ProductoDetail from './ProductoDetail'
 import Carrito from './carrito/Carrito';
+import SeguimientoPedidos from './seguimientoPedidos/seguimientoPedidos/SeguimientoPedidos';
+import PedidoFounded from './seguimientoPedidos/pedidoFounded/PedidoFounded'
+
+
+
 import history from '../../history'
 
 class Tienda extends React.Component {
@@ -76,6 +81,7 @@ class Tienda extends React.Component {
                   {productoSelected ? 'Producto Selected' : null}             
                     <Route path="/tienda/" exact component={
                       ()=><ProductosList 
+                        tienda = {tienda}
                         productos={this.state.productos} 
                         categorias={this.state.categorias} 
                         onProductoClick={(p)=>this.onProductoClick(p)} 
@@ -83,7 +89,11 @@ class Tienda extends React.Component {
                         categoriaSelectedId={ categoriaSelected ? categoriaSelected.id : null}/>
                       } />
                     <Route path="/tienda/producto/:url_producto" exact component={ProductoDetail} /> 
-                    <Route path="/tienda/caja" exact component={Carrito} /> 
+                    <Route path="/tienda/caja" exact component={(props)=> <Carrito {...props} tiendaId={tienda.id} />} /> 
+
+                    <Route path="/tienda/seguimiento" exact component={SeguimientoPedidos} /> 
+                    <Route path="/tienda/seguimiento/:codigo_seguimiento" exact component={PedidoFounded} />
+                    
                 </div>
                 )
         } else {

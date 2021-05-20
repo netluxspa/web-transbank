@@ -28,18 +28,19 @@ class ProductoViewSet(viewsets.ModelViewSet):
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
-    # filter_backends = (DjangoFilterBackend,)
-    # filter_fields = ('tienda', 'url',)
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('codigo_seguimiento', 'tienda__pagina__codigo',)
 
     def create(self, request, *args, **kwargs):
         productos = request.data["productos"]
-
+        tienda = request.data["tienda"]
         for p in productos:
             serializer = ProductosPedidoSerializer(data=p)
             if (serializer.is_valid() == False):
                 return Response({'error': serializer.errors})
 
         new_pedido = Pedido()
+        new_pedido.tienda = Tienda.objects.get(pk=tienda)
         new_pedido.save()
 
         for p in productos:

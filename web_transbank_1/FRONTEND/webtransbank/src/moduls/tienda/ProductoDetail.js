@@ -111,7 +111,7 @@ class ProductoDetail extends React.Component {
                                     <br />
                                     <div style={{textAlign: "center", display: 'grid'}}>
                                         <div>
-                                            <Button onClick={()=>this.props.dispatch({type:ADD_CARRITO, payload: {producto: producto.id, cantidad: this.state.cantidad}})} variant='contained'  color="primary">Agregar al carrito</Button>
+                                            <Button onClick={()=>this.props.dispatch({type:ADD_CARRITO, payload: {producto: producto.id, titulo: producto.titulo, precio:producto.precio, cantidad: this.state.cantidad}})} variant='contained'  color="primary">Agregar al carrito</Button>
                                         </div>
                                         <div>
                                             <Button onClick={()=>history.push('/tienda/caja')} style={{ marginTop:'10px'}} variant='outlined'  color="primary">Ir al carrito</Button>

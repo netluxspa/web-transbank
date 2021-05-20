@@ -1,0 +1,46 @@
+.contResumenPago{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    font-size: 0.7em;
+}
+
+.contResumenPago > .contResumenPagoHeaders{
+    display: grid;
+    grid-template-columns: 4fr 1fr 1fr;
+    gap: 10px;
+    padding-bottom: 5px;
+    border-bottom: solid 1px gray;
+}
+.contResumenPago > .contResumenPagoItem{
+    display: grid;
+    grid-template-columns: 4fr 1fr 1fr;
+    gap: 10px;
+}
+
+.total{
+    border-top: 1px solid gray;
+    padding-top: 5px;
+    display: grid;
+    grid-template-columns: 4fr 2fr;
+}
+
+
+
+.contDatosComprador{
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.3fr;
+    gap: 10px;
+    font-size: 0.7em;
+}
+.contDatosComprador > .contDatosCompradorHeaders{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    /* border-bottom: solid 1px gray; */
+}
+.contDatosComprador > .contDatosCompradorData{
+    display: grid;
+    grid-template-columns: 1fr ;
+    gap: 10px;
+}
