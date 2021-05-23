@@ -7,6 +7,9 @@ import ResumenPago from './resumenPago/ResumenPago'
 import logoTransbank from '../../../assets/web_pay.png'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import Alert from '@material-ui/lab/Alert';
+
+ 
 
 import history from '../../../history'
 
@@ -23,7 +26,8 @@ class Carrito extends React.Component {
         super(props);
         this.state = {
             url: null,
-            token: null
+            token: null,
+            errorEnvio: ''
         }
         window.scrollTo(0, 0);
     }
@@ -36,9 +40,27 @@ class Carrito extends React.Component {
         }
     }
 
+    validateEnvio = (envio) => {
+        for (let index = 0; index < Object.keys(envio).length; index++) {
+            const element = Object.keys(envio)[index];
+            if (envio[element] == ''){
+                return false
+            }
+        }
+        return true
+    }
+
     verificateDoTransaction = () =>{
         if (this.props.userPagina) {
-            this.createTransaction()
+            if (this.validateEnvio(this.props.envio)){
+                this.createTransaction()
+            } else {
+                this.setState({errorEnvio: 'Debe completar los datos del envio para pagar.'})
+                setTimeout(() => {
+                    this.setState({errorEnvio: ''})
+                }, 3000);
+            }
+            // 
         }else{
             history.push('/auth/register')
         }
@@ -47,12 +69,14 @@ class Carrito extends React.Component {
 
     createTransaction = () => {
        var productos = this.props.productos;
+       const envio = this.props.envio;
        productos = productos.map(p=>{
            return {producto: p.producto, cantidad: p.cantidad}
        })
        const body = {
             tienda: this.props.tiendaId,
-            productos: productos
+            productos: productos,
+            envio: envio
            
        }
         const headers = {headers: {"Content-Type":"application/json", "site":localStorage.getItem('site'), "userkey": localStorage.getItem('userkey')}}
@@ -107,7 +131,14 @@ class Carrito extends React.Component {
                     <div className='pagar'>
                         <div>
                             <ResumenPago />
+                            {this.state.errorEnvio ?
+                            <div style={{marginTop: "20px"}}>
+                                <Alert severity="error">{this.state.errorEnvio}</Alert> 
+                            </div>
+                             : 
+                             null}
                             <div className='botonPagar'>
+
                             <Button onClick={()=>this.verificateDoTransaction()} style={{width: "100%"}}
                                 variant='contained' 
                                 color="primary">
@@ -149,7 +180,8 @@ class Carrito extends React.Component {
 const mapStateToProps = state => {
     return {
         productos: Object.values(state.carrito),
-        userPagina: state.userPagina
+        userPagina: state.userPagina,
+        envio: state.envio,
     }
 }
 

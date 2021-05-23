@@ -33,7 +33,13 @@ def sendActivationCode(user):
         mensaje = str(code_activation.code)
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [user.email]
-        send_mail(subject, mensaje, email_from, recipient_list)
+
+        try:
+            send_mail(subject, mensaje, email_from, recipient_list)
+            return {"status": True, "error":"ok"}
+        except:
+            return {"status": False, "error":"Error con el correo"}
+
 
 
 @api_view(['POST'])
@@ -45,10 +51,15 @@ def registerUser(request):
         user_db = False
     if user_db:
         if user_db.is_active == False:
+            print('here')
             user_db.password = user_request["password"]
             user_db.save()
-            sendActivationCode(user_db)
-            return Response({'message': 'Hemos enviado el codigo de activación al correo ' + user_db.email})
+            sendCode = sendActivationCode(user_db)
+            if sendCode["status"]:
+                return Response({'message': 'Hemos enviado el codigo de activación al correo ' + user_db.email})
+            else:
+                return Response({'error': sendCode["error"]}, status=status.HTTP_400_BAD_REQUEST)
+            
     serializer = UserPaginaSerializer(data=user_request)
     if serializer.is_valid():
         serializer.save()

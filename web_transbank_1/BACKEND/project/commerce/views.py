@@ -4,11 +4,13 @@ from rest_framework import serializers
 from .models import *
 from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
+from pag.permissions import OnlyAdminPerPag
 
 class TiendaViewSet(viewsets.ModelViewSet):
     queryset = Tienda.objects.all()
     serializer_class = TiendaSerializer
     filter_backends = (DjangoFilterBackend,)
+    permission_classes = (OnlyAdminPerPag,)
     filter_fields = ('pagina',)
 
 

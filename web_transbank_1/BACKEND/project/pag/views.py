@@ -4,6 +4,7 @@ from rest_framework import serializers
 from .models import *
 from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
+from .permissions import OnlyAdminPerPag
 
 
 class FixAnAppointmentPermssion(permissions.BasePermission):
@@ -41,10 +42,10 @@ class PaginaViewSet(viewsets.ModelViewSet):
     queryset = Pagina.objects.all()
     serializer_class = PaginaSerializer
     filter_backends = (DjangoFilterBackend,)
+    permission_classes = (OnlyAdminPerPag,)
     filter_fields = ('codigo',)
 
-    def create(self, request, *args, **kwargs):
-        return Response('mamame la colloma bastardo la puta')
+    
 
 
 

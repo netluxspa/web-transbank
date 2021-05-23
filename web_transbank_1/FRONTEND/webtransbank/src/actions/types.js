@@ -2,6 +2,8 @@ export const ADD_PAGINA = 'ADD_PAGINA';
 
 export const ADD_CARRITO = 'ADD_CARRITO';
 export const REMOVE_CARRITO = 'REMOVE_CARRITO';
+export const REMOVE_ALL_CARRITO = 'REMOVE_ALL_CARRITO';
+
 
 export const ADD_ENVIO = 'ADD_ENVIO';
 

@@ -1,4 +1,4 @@
-import { ADD_CARRITO, REMOVE_CARRITO } from '../actions/types'
+import { ADD_CARRITO, REMOVE_CARRITO, REMOVE_ALL_CARRITO } from '../actions/types'
 import _ from 'lodash';
 
 // const initialState =  {
@@ -24,6 +24,8 @@ const carritoReducer = (state = initialState(), action) => {
             localStorage.removeItem('productos')
             localStorage.setItem('productos', JSON.stringify(_.omit(state, action.payload)));
             return _.omit(state, action.payload);
+        case REMOVE_ALL_CARRITO:
+            return {}
         default:
             return state;
     }

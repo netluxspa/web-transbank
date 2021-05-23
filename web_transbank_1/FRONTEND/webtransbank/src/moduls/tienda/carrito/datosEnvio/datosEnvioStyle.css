@@ -11,7 +11,7 @@
     width: 100%;
 }
 
-.contDatosEnvio .direccion, .contDatosEnvio .detalle, .contDatosEnvio .titulo{
+.contDatosEnvio *{
     grid-column: 1/3;
 }
 

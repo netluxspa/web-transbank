@@ -6,7 +6,6 @@ const initialState = {
     fono: '',
     ciudad: '',
     direccion: '',
-    correo: '', 
     detalle: ''
 }
 

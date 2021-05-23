@@ -51,7 +51,7 @@ const AdminTienda = () => {
         }
         api.patch('/commerce/tienda/' + tienda.id + '/',
             body, 
-            {headers: {'content-type': 'application/json'}}
+            {headers: {'content-type': 'application/json', 'site': localStorage.getItem('site'), 'adminkey': localStorage.getItem('adminkey')}}
         ).then(res=>{
             setExito('Los cambios se han realizado con éxito')
         }).catch(err=>{

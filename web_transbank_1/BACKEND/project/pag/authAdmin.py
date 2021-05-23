@@ -49,7 +49,7 @@ def sendActivationCode(admin):
 
 # DESACTIVADA POR AHORA  REGISTRO MANUAL
 @api_view(['POST'])
-def registerUser(request):
+def registerAdmin(request):
     user_request = request.data
     try:
         user_db = UserPagina.objects.get(email=user_request["email"])

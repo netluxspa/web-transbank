@@ -60,28 +60,52 @@ class Producto(models.Model):
         return self.titulo
 
 class Transaction(models.Model):
-    vci = models.CharField(max_length=50)
-    amount = models.CharField(max_length=50)
-    status = models.CharField(max_length=50)
-    buy_order = models.CharField(max_length=50) 
-    session_id = models.CharField(max_length=50)
-    card_detail = models.CharField(max_length=50)
-    accounting_date = models.CharField(max_length=50)
-    transaction_date = models.CharField(max_length=50)
-    authorization_code = models.CharField(max_length=50)
-    payment_type_code = models.CharField(max_length=50)
-    response_code = models.CharField(max_length=50)
-    installments_number = models.CharField(max_length=50)
+
+    main_status = models.BooleanField()
+
+    vci = models.CharField(max_length=50, null=True, blank=True)
+    amount = models.CharField(max_length=50, null=True, blank=True)
+    status = models.CharField(max_length=50, null=True, blank=True)
+    buy_order = models.CharField(max_length=50, null=True, blank=True)
+    session_id = models.CharField(max_length=50, null=True, blank=True)
+    card_detail = models.CharField(max_length=50, null=True, blank=True)
+    accounting_date = models.CharField(max_length=50, null=True, blank=True)
+    transaction_date = models.CharField(max_length=50, null=True, blank=True)
+    authorization_code = models.CharField(max_length=50, null=True, blank=True)
+    payment_type_code = models.CharField(max_length=50, null=True, blank=True)
+    response_code = models.CharField(max_length=50, null=True, blank=True)
+    installments_amount = models.CharField(max_length=50, null=True, blank=True)
+    installments_number = models.CharField(max_length=50, null=True, blank=True)
+
     
 
 class Pedido(models.Model):
     tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
     userPagina = models.ForeignKey(UserPagina, on_delete=models.CASCADE)
     fecha = models.DateField(auto_now_add=True)
+    num_orden = models.IntegerField()
     codigo_seguimiento = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4)
     productos = models.ManyToManyField(Producto, through='ProductosPedido', blank=True)
     transaction = models.OneToOneField(Transaction, null=True, blank=True, on_delete=models.SET_NULL)
 
+    nombre_receptor = models.CharField(max_length=100)
+    direccion = models.CharField(max_length=100)
+    ciudad = models.CharField(max_length=100)
+    fono = models.CharField(max_length=100)
+    detalle = models.TextField()
+
+    class Meta:
+        unique_together = (('num_orden', 'tienda'),) 
+        index_together = (('num_orden', 'tienda'),)
+
+    def save(self, *args, **kwargs):
+        if (self.id == None):
+            try:
+                last_num_orden = Pedido.objects.filter(tienda=self.tienda).latest('num_orden').num_orden
+            except:
+                last_num_orden = 0
+            self.num_orden = last_num_orden + 1
+        super(Pedido, self).save(*args, **kwargs)
 
 
 class ProductosPedido(models.Model):

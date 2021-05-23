@@ -31,7 +31,7 @@ class DatosEnvio extends React.Component {
 
 
     render(){
-        const {nombre, fono, direccion, ciudad, correo, detalle} = this.props.envio;
+        const {nombre, fono, direccion, ciudad, detalle} = this.props.envio;
         const { dispatch } = this.props;
         return (
             <div className='contDatosEnvio'>
@@ -48,9 +48,6 @@ class DatosEnvio extends React.Component {
                 </div>
                 <div className='fono'>
                     <Field name="fono" labelReducer='fono' component={this.renderInput} label="Fono" valor={fono} dispatch={dispatch} />
-                </div>
-                 <div className='correo'>
-                    <Field name="correo" labelReducer='correo' component={this.renderInput} label="Correo" valor={correo} dispatch={dispatch} />
                 </div>
                 <div className='ciudad'>
                     <Field name="ciudad" labelReducer='ciudad' component={this.renderInput} label="Ciudad" valor={ciudad} dispatch={dispatch} />
@@ -82,9 +79,6 @@ const validate = formValues => {
 
     if (!formValues.fono) {
         errors.fono = 'You must enter a title';
-    }
-    if (!formValues.correo) {
-        errors.correo = 'You must enter a title';
     }
 
     if (!formValues.ciudad) {
