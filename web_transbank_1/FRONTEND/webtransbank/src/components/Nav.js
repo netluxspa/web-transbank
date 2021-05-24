@@ -22,6 +22,7 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import MenuMenu from './Menu'
 
 import { logout } from '../actions/userPagina'
+import { logoutAdmin } from '../actions/adminPagina'
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -74,27 +75,29 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   sectionDesktop: {
-    display: 'none',
+    display: 'flex',
     [theme.breakpoints.up('md')]: {
       display: 'flex',
     },
   },
   sectionMobile: {
-    display: 'flex',
+    display: 'none',
     [theme.breakpoints.up('md')]: {
       display: 'none',
     },
   },
 }));
 
-function Nav({productosCarrito, userPagina, logout}) {
+function Nav({productosCarrito, userPagina, adminPagina, logout, logoutAdmin }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorElAdmin, setAnchorElAdmin] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
 
 
   const isMenuOpen = Boolean(anchorEl);
+  const isMenuAdminOpen = Boolean(anchorElAdmin);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
 
@@ -106,6 +109,18 @@ function Nav({productosCarrito, userPagina, logout}) {
 
   };
 
+
+  const handleAdminMenuOpen = (event) => {
+    if (adminPagina){
+      setAnchorElAdmin(event.currentTarget);
+    }
+
+  };
+
+
+
+  
+
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
@@ -115,11 +130,17 @@ function Nav({productosCarrito, userPagina, logout}) {
     handleMobileMenuClose();
   };
 
+
+  const handleMenuAdminClose = () => {
+    setAnchorElAdmin(null);
+  };
+
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
   const menuId = 'primary-search-account-menu';
+  const menuIdAdmin = 'primary-search-account-menu-admin';
   const renderMenu =  (
 
         <Menu
@@ -133,6 +154,25 @@ function Nav({productosCarrito, userPagina, logout}) {
             >
                 { userPagina ?  <MenuItem>{ userPagina.nombre}</MenuItem> : null}
                 { userPagina ? <MenuItem onClick={()=>logout()}> Cerrar sesión</MenuItem> : null}
+
+            </Menu>
+      );
+
+    
+  
+      const renderAdminMenu =  (
+
+        <Menu
+              anchorEl={anchorElAdmin}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              id={menuIdAdmin}
+              keepMounted
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              open={isMenuAdminOpen}
+              onClose={handleMenuAdminClose}
+            >
+                { adminPagina ?  <MenuItem>{ adminPagina.nombre}</MenuItem> : null}
+                { adminPagina ? <MenuItem onClick={()=>logoutAdmin()}> Cerrar sesión admin</MenuItem> : null}
 
             </Menu>
       );
@@ -188,6 +228,20 @@ function Nav({productosCarrito, userPagina, logout}) {
           <Typography className={classes.title} variant="h6" noWrap>
             CanabikTools 
           </Typography>
+          {adminPagina ?
+           <IconButton
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleAdminMenuOpen}
+              color="inherit"
+            >
+              <AccountCircle style={{color: 'black'}} />
+          </IconButton>
+          :
+          null  
+        }
 
           {/* <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -245,6 +299,7 @@ function Nav({productosCarrito, userPagina, logout}) {
       </AppBar>
       { renderMobileMenu}
       {renderMenu}
+      {renderAdminMenu}
     </div>
   );
 }
@@ -255,12 +310,13 @@ function Nav({productosCarrito, userPagina, logout}) {
 const mapStateToProps = state => {
   return { 
     productosCarrito: state.carrito,
-    userPagina: state.userPagina
+    userPagina: state.userPagina,
+    adminPagina: state.adminPagina
   };
 };
 
 
 export default connect(
   mapStateToProps,
-  { logout }
+  { logout, logoutAdmin }
 )(Nav);

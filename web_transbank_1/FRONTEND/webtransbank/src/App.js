@@ -4,6 +4,9 @@ import history from './history'
 import api from './api'
 import { Router, Route, Redirect } from 'react-router-dom';
 import Tienda from './moduls/tienda/Tienda'
+
+import Clientes from './moduls/clientes/Clientes'
+
 import React from 'react'
 import Nav from './components/Nav'
 
@@ -83,6 +86,10 @@ class App extends React.Component {
                 <Redirect to="/tienda" />
             </Route>
             <Route path='/auth' component={Auth}></Route>
+            <Route path='/clientes' component={Clientes}></Route>
+
+
+            
             <Route path='/admin' component={Admin}></Route>
             <Route  path="/tienda" component={()=><Tienda pagina={this.state.pagina} />} />
           </Router>

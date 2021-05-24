@@ -4,7 +4,7 @@ from rest_framework import serializers
 from .models import *
 from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
-from pag.permissions import OnlyAdminPerPag
+from pag.permissions import OnlyAdminPerPag, OnlyCreatePerUserAndListPerUserAndAdminAndRetrievePerAll
 
 class TiendaViewSet(viewsets.ModelViewSet):
     queryset = Tienda.objects.all()
@@ -31,7 +31,9 @@ class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('codigo_seguimiento', 'tienda__pagina__codigo',)
+    permission_classes = (OnlyCreatePerUserAndListPerUserAndAdminAndRetrievePerAll,)
+    http_method_names = ['get']
+    filter_fields = ('codigo_seguimiento', 'tienda__pagina__codigo', 'userPagina', )
 
     def create(self, request, *args, **kwargs):
         productos = request.data["productos"]

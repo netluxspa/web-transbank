@@ -15,7 +15,7 @@ export const getAdmin = () => dispatch => {
 
 
 export const logoutAdmin = () => dispatch => {
-    
+    console.log('work')
     api.post('/pagina/logout-admin/', 
         {},
         {headers: {"content-type": "application/json", "site": localStorage.getItem('site'), 'adminkey': localStorage.getItem('adminkey')}}
