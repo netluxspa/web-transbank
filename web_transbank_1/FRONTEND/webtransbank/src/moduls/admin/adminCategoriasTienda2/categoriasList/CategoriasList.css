@@ -1,0 +1,35 @@
+.gridCategoriasTienda {
+    width: 80%;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.gridCategoriasTienda > div {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.425);
+    padding: 10px;
+}
+
+.gridCategoriasTienda .item{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.gridCategoriasTienda .content {
+    
+}
+
+.gridCategoriasTienda .options {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.smallText {
+    font-size: 0.8em !important;
+}
+
+@media (max-width: 760px){
+    .gridCategoriasTienda {
+        width: 95%;
+    }
+}

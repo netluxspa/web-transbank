@@ -13,7 +13,7 @@ import Nav from './components/Nav'
 import Admin from './moduls/admin/Admin'
 
 import Auth from './moduls/auth/Auth'
-import { ADD_PAGINA, ADD_USER_PAGINA, ADD_ADMIN_PAGINA ,REMOVE_ADMIN_PAGINA } from './actions/types';
+import { ADD_PAGINA, ADD_USER_PAGINA, ADD_ADMIN_PAGINA ,REMOVE_USER_PAGINA } from './actions/types';
 import { getUser } from './actions/userPagina';
 
 
@@ -41,7 +41,9 @@ class App extends React.Component {
           if (res && res.data) {
               this.props.dispatch({type: ADD_USER_PAGINA, payload: res.data})
           }
-      })
+      }).catch(()=> this.props.dispatch({type: REMOVE_USER_PAGINA}))
+    }else{
+      this.props.dispatch({type: REMOVE_USER_PAGINA})
     }
   }
 

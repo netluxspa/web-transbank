@@ -11,14 +11,15 @@ class TiendaViewSet(viewsets.ModelViewSet):
     serializer_class = TiendaSerializer
     filter_backends = (DjangoFilterBackend,)
     permission_classes = (OnlyAdminPerPag,)
-    filter_fields = ('pagina',)
+    filter_fields = ('pagina','pagina__codigo',)
 
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+    permission_classes = (OnlyAdminPerPag,)
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('tienda',)
+    filter_fields = ('tienda', 'tienda__pagina', )
 
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()

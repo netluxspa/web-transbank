@@ -4,6 +4,18 @@ from rest_framework.response import Response
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
+
+
+from django.core import mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+from django.conf import settings
+from django.core.mail import send_mail
+
+
+
+
 from rest_framework import status
 
 from django.shortcuts import render
@@ -189,7 +201,6 @@ def transaction_status(token, codigo_seguimiento):
         tienda = Pedido.objects.get(codigo_seguimiento=codigo_seguimiento).tienda
     except:
         tienda = False
-    print('tienda', tienda)
     if tienda and tienda.codigo_comercio and tienda.llave_secreta:
         url = "https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.0/transactions/" + token + "/"
         headers = {
@@ -205,7 +216,6 @@ def transaction_status(token, codigo_seguimiento):
                 pedido = False
 
             if pedido: 
-                print('r.json()', r.json())
 
                 new_transaction = Transaction()
 
@@ -234,8 +244,72 @@ def transaction_status(token, codigo_seguimiento):
                 pedido.transaction = new_transaction
                 pedido.save()
 
-
+        if r.json()["response_code"] == 0:
+            sendEmailToComprador(codigo_seguimiento)
+            sendEmailToVendedor(codigo_seguimiento)
 
         return r.json()
     else:
         return 'error'
+
+
+
+
+def sendEmailToComprador(codigo_seguimiento):
+    try:
+        pedido = Pedido.objects.get(codigo_seguimiento=codigo_seguimiento)
+        serializerPedido = PedidoSerializer(pedido)
+    except: 
+        serializerPedido = None 
+    if serializerPedido:
+        user = UserPagina.objects.get(pk=serializerPedido.data["userPagina"])
+        productos = serializerPedido.data["productos"]
+      
+
+        context = {
+            'user': user.nombre,
+            'productos':productos,
+            'total':  serializerPedido.data["monto"],
+            'tienda': pedido.tienda.pagina.codigo,
+            'codigo_seguimiento': codigo_seguimiento
+        }
+
+        subject = 'Compraste en ' + pedido.tienda.pagina.codigo
+
+        html_message = render_to_string('email_comprador.html', context)
+        plain_message = strip_tags(html_message)
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [user.email]
+        mail.send_mail(subject, plain_message, from_email, recipient_list, html_message=html_message)
+
+
+def sendEmailToVendedor(codigo_seguimiento):
+    try:
+        pedido = Pedido.objects.get(codigo_seguimiento=codigo_seguimiento)
+        serializerPedido = PedidoSerializer(pedido)
+    except: 
+        serializerPedido = None 
+    if serializerPedido:
+        user = UserPagina.objects.get(pk=serializerPedido.data["userPagina"])
+        admin = pedido.tienda.pagina.admin
+        tienda = pedido.tienda.pagina.codigo
+      
+        context = {
+            'user': user,
+            'admin': admin,
+            'pedido': serializerPedido.data,
+            'tienda': tienda
+        }
+
+        subject = 'Te compraron por ' + pedido.tienda.pagina.codigo
+
+        html_message = render_to_string('email_vendedor.html', context)
+        plain_message = strip_tags(html_message)
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [admin.email]
+        mail.send_mail(subject, plain_message, from_email, recipient_list, html_message=html_message)
+
+
+
+
+        

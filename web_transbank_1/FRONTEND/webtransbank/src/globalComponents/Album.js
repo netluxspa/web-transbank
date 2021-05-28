@@ -71,7 +71,7 @@ function Album({productos, categorias, selectCategoria, tienda, categoriaSelecte
           <Container maxWidth="sm">
             <div style={{ padding:"20px", borderRadius: "4px", position: "relative"}}>
               <div onClick={()=>history.push('/admin/tienda')} style={{height: "20px", width: "20px", background: "black", position: "absolute", right: "10px", top: "10px", zIndex: "10", borderRadius: "4px"}}></div>
-              <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+              <Typography component="h3" variant="h3" align="center" color="textPrimary" gutterBottom>
                 {tienda.titulo}
               </Typography>
               <Typography variant="h5" align="center" color="textSecondary" paragraph>
@@ -79,7 +79,7 @@ function Album({productos, categorias, selectCategoria, tienda, categoriaSelecte
               </Typography>
             </div>
             <div style={{ padding:"20px", borderRadius: "4px", position: "relative"}}  className={classes.heroButtons}>
-            <div style={{height: "20px", width: "20px", background: "black", position: "absolute", right: "10px", top: "10px", zIndex: "10", borderRadius: "4px"}}></div>
+            <div onClick={()=>history.push('/admin/categorias-tienda')}  style={{height: "20px", width: "20px", background: "black", position: "absolute", right: "10px", top: "10px", zIndex: "10", borderRadius: "4px"}}></div>
 
               <Grid container spacing={2} justify="center">
               <Grid  item> 
@@ -118,7 +118,7 @@ function Album({productos, categorias, selectCategoria, tienda, categoriaSelecte
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
           <Grid style={{ padding:"20px", borderRadius: "4px", position: "relative"}} container spacing={4}>
-          <div style={{height: "20px", width: "20px", background: "black", position: "absolute", right: "10px", top: "10px", zIndex: "10", borderRadius: "4px"}}></div>
+          <div onClick={()=>history.push('/admin/productos-tienda')} style={{height: "20px", width: "20px", background: "black", position: "absolute", right: "10px", top: "10px", zIndex: "10", borderRadius: "4px"}}></div>
 
             {productos.map((card) => (
               <Grid item key={card.id} xs={12} sm={6} md={4}>

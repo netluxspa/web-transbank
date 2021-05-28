@@ -36,6 +36,7 @@ class TextoProductoSerializer(serializers.ModelSerializer):
 class ProductoSerializer(serializers.ModelSerializer):
     imagenes = ImagenSerializer(many=True, read_only=True)
     textos = TextoProductoSerializer(many=True, read_only=True)
+    categoria = CategoriaSerializer(many=False, read_only=True)
     class Meta:
         model = Producto
         fields = '__all__'
@@ -71,7 +72,7 @@ class PedidoSerializer(serializers.ModelSerializer):
     productos = ProductoPedidoSerializer(source='productospedido_set', many=True, required=False)
     class Meta:
         model = Pedido
-        fields =  '__all__'
+        fields =  ('id', 'tienda', 'userPagina', 'fecha', 'num_orden', 'codigo_seguimiento', 'productos', 'transaction', 'nombre_receptor', 'direccion', 'ciudad', 'fono', 'detalle', 'monto',)
 
 
 

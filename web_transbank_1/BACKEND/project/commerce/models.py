@@ -94,6 +94,14 @@ class Pedido(models.Model):
     fono = models.CharField(max_length=100)
     detalle = models.TextField()
 
+    def monto(self):
+        monto = 0
+        productos = ProductosPedido.objects.filter(pedido=self.id)
+        for i in productos:
+            monto += i.precio_pedido*i.cantidad
+        return monto
+
+
     class Meta:
         unique_together = (('num_orden', 'tienda'),) 
         index_together = (('num_orden', 'tienda'),)

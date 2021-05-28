@@ -1,0 +1,35 @@
+.gridProductos {
+    width: 80%;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.gridProductos > div {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.425);
+    padding: 10px;
+}
+
+.gridProductos .item{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.gridProductos .content {
+    
+}
+
+.gridProductos .options {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.smallText {
+    font-size: 0.8em !important;
+}
+
+@media (max-width: 760px){
+    .gridProductos {
+        width: 95%;
+    }
+}

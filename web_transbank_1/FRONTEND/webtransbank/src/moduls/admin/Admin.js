@@ -1,7 +1,12 @@
 import {  Route, Redirect } from 'react-router-dom';
+
 import AdminHome from './AdminHome'
 import AdminTienda from './adminTienda/adminTienda'
+import AdminCategoriasTienda2 from './adminCategoriasTienda2/AdminCategoriasTienda2'
+import AdminProductos from './adminProductos/AdminProductos'
 import AdminAuth from './adminAuth/AdminAuth';
+
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -22,6 +27,8 @@ const Admin = ({admin}) => {
                 <Route path='/admin/home' exact component={AdminHome} />
                 <Route path='/admin/auth'><Redirect to="/admin/home" /></Route>
                 <Route path='/admin/tienda' exact component={AdminTienda} />
+                <Route path='/admin/categorias-tienda'  component={AdminCategoriasTienda2} />
+                <Route path='/admin/productos-tienda'  component={AdminProductos} />
             </React.Fragment>
             }
         </div>

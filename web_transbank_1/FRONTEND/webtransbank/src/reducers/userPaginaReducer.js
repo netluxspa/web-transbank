@@ -1,7 +1,7 @@
 import { ADD_USER_PAGINA, REMOVE_USER_PAGINA } from '../actions/types'
 
 
-const userPaginaReducer = (state = null, action) => {
+const userPaginaReducer = (state = {}, action) => {
 
     switch (action.type) {
         case ADD_USER_PAGINA:

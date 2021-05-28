@@ -1,0 +1,78 @@
+
+        
+
+        <div>
+        <div style='width:80%; font-weight: normal; font-size: 1.1em; margin:30px auto; text-align:center;'>
+           Hola {{admin.nombre}}, {{user.nombre}} ha realizado una compra por ${{pedido.monto}} en {{tienda}} y el pago se ha realizado de manera exitosa. Para verificar la transacción en la pagina de Transbank debes usar el Nº de orden del pedido.
+        </div>
+
+        <div style='width:80%; font-weight: normal; font-size: 1.1em; margin:30px auto; text-align:center; '>
+             Nº de orden: {{pedido.num_orden}}
+        </div>
+
+
+        <div style='width:80%; font-weight: normal; font-size: 1.1em; margin:30px auto;  '>
+             Información del pedido.
+        </div>
+
+      
+        <table style='width:80%; margin: auto; border-collapse: collapse; font-size: 0.8em' class='tableEmail'>
+            <thead>
+                <th style='padding: 10px; border-bottom: solid 1px black; text-align: left'>ítem</th>
+                <th style='padding: 10px; border-bottom: solid 1px black; text-align: right'>cantidad</th>
+                <th style='padding: 10px; border-bottom: solid 1px black; text-align: right'>precio</th>
+            </thead>
+            {% for p in pedido.productos %}
+                <tr>
+                    <td style='padding: 10px; text-align: left'>{{p.producto.titulo}}</td>
+                    <td style='padding: 10px; text-align: right'>{{p.cantidad}}</td>
+                    <td style='padding: 10px; text-align: right'>{{p.precio_pedido}}</td>
+                </tr>
+            {% endfor %}
+                <tr>
+                    <th colspan='2' style='padding: 10px; border-top: solid 1px black; text-align: right'>Total</th>
+                    <th style='padding: 10px; border-top: solid 1px black; text-align: right'>${{pedido.monto}}</th>
+                </tr>
+      
+
+
+        </table>
+
+        <div style='width:80%; font-weight: normal; font-size: 1.1em; margin:30px auto;  '>
+             Información del envío.
+        </div>
+
+      
+        <table style='width:80%; margin: auto; border-collapse: collapse; font-size: 0.8em' class='tableEmail'>
+
+            <tr>
+                <th style='padding: 10px; border-bottom: solid 1px black; text-align: left'>receptor</th>
+                <td style='padding: 10px; border-bottom: solid 1px black; border-left: solid 1px black; text-align: left'>{{pedido.nombre_receptor}}</td>
+            </tr>
+             <tr>
+                <th style='padding: 10px; border-bottom: solid 1px black; text-align: left'>fono</th>
+                <td style='padding: 10px; border-bottom: solid 1px black; border-left: solid 1px black; text-align: left'>{{pedido.fono}}</td>
+            </tr>
+             <tr>
+                <th style='padding: 10px; border-bottom: solid 1px black; text-align: left'>ciudad</th>
+                <td style='padding: 10px; border-bottom: solid 1px black; border-left: solid 1px black; text-align: left'>{{pedido.ciudad}}</td>
+            </tr>
+             <tr>
+                <th style='padding: 10px; border-bottom: solid 1px black; text-align: left'>direccion</th>
+                <td style='padding: 10px; border-bottom: solid 1px black; border-left: solid 1px black; text-align: left'>{{pedido.direccion}}</td>
+            </tr>
+             <tr>
+                <th style='padding: 10px;  text-align: left'>detalle</th>
+                <td style='padding: 10px; border-left: solid 1px black;  text-align: left'>{{pedido.detalle}}</td>
+            </tr>
+                    
+
+        </table>
+
+  
+        <div style='width:80%; font-weight: normal; font-size: 1.1em; margin:30px auto; text-align:center;'>
+            Gracias por administrar {{tienda}}.
+        </div>
+        <div>
+    
+

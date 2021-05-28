@@ -27,7 +27,7 @@ class PedidoFounded  extends React.Component {
 
     getPedido(codigo_seguimiento){
         api.get('/commerce/pedido/?codigo_seguimiento=' + codigo_seguimiento + '&tienda__pagina__codigo=' + localStorage.getItem('site'),
-            {headers: {'content-type': 'application/json'}}
+            {headers: {'content-type': 'application/json', 'site': localStorage.getItem('site'), 'userkey':localStorage.getItem('userkey')}}
         ).then(res=>{
             if (res && res.data && res.data.length > 0){
                 const pedido = res.data[0]

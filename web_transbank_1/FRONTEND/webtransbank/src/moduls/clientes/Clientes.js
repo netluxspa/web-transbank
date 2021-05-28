@@ -16,41 +16,27 @@ class Clientes extends React.Component {
 
     constructor(props){
         super(props)
-        this.state = {user: null}
-    }
-
-    getUser = () => {
-        api.get('/pagina/get-user/', 
-        {headers: {"content-type": "application/json", "site": localStorage.getItem('site'), 'userkey': localStorage.getItem('userkey')}}
-        ).then(res=>{
-            if (res && res.data) {
-                this.setState({user:res.data})
-            }
-        }).catch(err=>{
-            history.push('/auth')
-        })
-    }
-
-    componentDidMount() {
-        this.getUser();
     }
 
     renderReturn = () => {
-        return (
-            <React.Fragment>
-                { this.props.userPagina ?
+        const {userPagina} = this.props;
+        console.log(userPagina)
+        if (userPagina && userPagina.hasOwnProperty('id')){
+            return (
                 <React.Fragment>
-                    <Route exact  path="/clientes">
+                    <Route exact path="/clientes">
                         <Redirect to="/clientes/pedidos" />
                     </Route>
-                    <Route path='/clientes/pedidos' component={()=> <PedidosCliente user={this.state.user} />}></Route>
+                    <Route path='/clientes/pedidos' component={PedidosCliente} />
                 </React.Fragment>
-                :
-                null
-                }
-               
-            </React.Fragment>
-        )
+            )
+        }else if (userPagina == null) {
+            history.push('/auth')
+            return 'null'
+        } else{
+            return 'loading'
+        }
+       
     }
 
     render(){
@@ -64,5 +50,6 @@ const mapStateToProps = (state) => {
         userPagina: state.userPagina
     }
 }
+
 
 export default connect(mapStateToProps, {})(Clientes);

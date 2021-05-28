@@ -3,6 +3,8 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import history from '../history'
 
+import Button from '@material-ui/core/Button';
+
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -257,7 +259,18 @@ function Nav({productosCarrito, userPagina, adminPagina, logout, logoutAdmin }) 
             />
           </div> */}
           <div className={classes.grow} />
+
           <div className={classes.sectionDesktop}>
+
+            <div style={{display:'flex', alignItems:'center'}}>
+            <Button  onClick={()=>history.push('/clientes')}
+                variant='contained'
+                color="primary"
+              >
+                Clientes
+              </Button>
+            </div>
+            
             <IconButton onClick={()=>history.push('/tienda/caja')} aria-label="show 4 new mails" color="inherit">
               <Badge badgeContent={Object.values(productosCarrito).length} color="secondary">
                 <ShoppingCartIcon />
