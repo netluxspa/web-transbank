@@ -9,8 +9,9 @@ class ProductoEdit extends React.Component {
 
     constructor(props){
         super(props)
-        this.state = {producto: null}
+        this.state = {producto: null, errors: null}
     }
+
 
     componentDidMount() {
         const {id} = this.props.match.params;
@@ -26,20 +27,24 @@ class ProductoEdit extends React.Component {
     }
 
 
-    updateProducto(newProducto){
-        console.log('categoria a crear', newProducto)
-
-        api.patch('/commerce/categoria/' + newProducto.id +'/',
-            newProducto,
+    updateProducto(producto){
+        console.log(producto)
+        api.patch('/commerce/producto/' + producto.id +'/',
+            producto,
             {headers: {'content-type':'application/json', 'site': localStorage.getItem('site'), 'adminkey': localStorage.getItem('adminkey')}}
-        ).then(res=>history.push('/admin/productos-tienda'))
+        ).then(res=>history.goBack())
+        .catch(err=>{
+            if (err && err.response && err.response.data){
+                this.setState({errors: err.response.data});
+            }
+        })
     }
 
 
     renderProductoEdit = (producto) => {
         if (producto){
             return (
-                <ProductoForm submitCategoria={(newCategoria)=>this.updateCategoria(newCategoria)} producto={producto} />
+                <ProductoForm submitProducto={(producto)=>this.updateProducto(producto)} producto={producto}  errors={this.state.errors}/>
             )
         } else {
             return 'loading';

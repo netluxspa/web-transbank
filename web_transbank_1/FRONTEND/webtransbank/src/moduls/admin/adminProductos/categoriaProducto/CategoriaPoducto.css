@@ -1,0 +1,14 @@
+.gridCategoriaProducto {
+    display: grid !important;
+    gap: 10px;
+    grid-template-columns: 8fr 1fr;
+
+}
+
+.gridCategoriaProducto > div{
+    display: flex;
+    align-items: center;
+
+}
+
+

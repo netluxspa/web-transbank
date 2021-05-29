@@ -24,6 +24,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
+    permission_classes = (OnlyAdminPerPag,)
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('tienda', 'url',)
 

@@ -1,9 +1,13 @@
+import { connect } from 'react-redux';
+import { SELECT_ADMIN_PRODUCT } from '../../../../actions/types'
+
 import React from 'react';
 import Modal from '../../../../components/modal/Modal'
 
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ViewComfyIcon from '@material-ui/icons/ViewComfy';
 import Typography from '@material-ui/core/Typography';
 
 
@@ -43,6 +47,10 @@ class ProductosList extends React.Component {
         })
     }
 
+    goEditProducto = p => {
+        this.props.dispatch({type:SELECT_ADMIN_PRODUCT, payload: p});
+        history.push(`/admin/productos-tienda/detail/${p.id}`);
+    }
 
     renderProductosList = (productos) => {
         return (
@@ -64,7 +72,7 @@ class ProductosList extends React.Component {
                                 </Typography>
                             </div>
                             <div className='content'>
-                                <Typography color="textSecondary">
+                                <Typography style={{textAlign:'right'}} color="textSecondary">
                                     precio
                                 </Typography>
                             </div>
@@ -72,15 +80,27 @@ class ProductosList extends React.Component {
                         </div>
                 { productos.map(p=>(
                         <div className='item' key={p.id}>
-                            <div className='content'>{p.titulo}</div>
-                            <div className='content'>{p.categoria.titulo}</div>
-                            <div className='content'>{p.precio}</div>
+                            <div className='content'>
+                                <Typography style={{fontSize:'0.9em'}} color="textPrimary">
+                                    {p.titulo}
+                                </Typography>
+                            </div>
+                            <div className='content'>
+                                <Typography style={{fontSize:'0.9em'}} color="textPrimary">
+                                {p.categoria_detail && p.categoria_detail.titulo ? p.categoria_detail.titulo : 'No '}
+                                </Typography>
+                            </div>
+                            <div className='content'>
+                                <Typography style={{fontSize:'0.9em', textAlign:'right'}} color="textPrimary">
+                                    $ {p.precio}
+                                </Typography>
+                            </div>  
                             <div className='options'> 
                                 <Button onClick={()=>history.push(`/admin/productos-tienda/edit/${p.id}`)} className='smallText' style={{marginRight:'10px'}} variant="outlined" size="small" color="primary">
                                     <EditIcon />
                                 </Button>
-                                <Button onClick={()=>history.push(`/admin/categorias-tienda/delete/${p.id}`)} className='smallText'  variant="outlined" size="small" color="secondary">
-                                        <DeleteIcon />
+                                <Button onClick={()=>this.goEditProducto(p) } className='smallText'  variant="outlined" size="small" color="secondary">
+                                        <ViewComfyIcon />
                                 </Button>
                             </div>
                         </div>
@@ -117,4 +137,14 @@ class ProductosList extends React.Component {
 }
 
 
-export default ProductosList;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        dispatch: (obj)=> dispatch(obj)
+    }
+};
+
+
+export default connect(null, mapDispatchToProps)(ProductosList);
+
+
+

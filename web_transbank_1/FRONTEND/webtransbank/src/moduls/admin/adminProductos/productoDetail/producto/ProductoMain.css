@@ -1,0 +1,23 @@
+.adminTiendaGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    width: 100%;
+}
+
+.adminTiendaGrid > div {
+    margin: auto;
+    width: 80%;
+}
+
+.adminTiendaGrid > div > * {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 760px) {
+    .adminTiendaGrid > div {
+        width: 100%;
+    }
+}

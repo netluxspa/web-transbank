@@ -6,19 +6,25 @@ import api from '../../../../api';
 
 class ProductoCreate extends React.Component {
 
+    state = {errors: null}
 
-    createCategoria(newCategoria){
-        api.post('/commerce/categoria/',
-            newCategoria,
+    createProducto(producto){
+        api.post('/commerce/producto/',
+            producto,
             {headers: {'content-type':'application/json', 'site': localStorage.getItem('site'), 'adminkey': localStorage.getItem('adminkey')}}
-        ).then(res=>history.push('/admin/categorias-tienda'))
+        ).then(res=>history.goBack())
+        .catch(err=>{
+            if (err && err.response && err.response.data){
+                this.setState({errors: err.response.data});
+            }
+        })
     }
 
 
 
     renderCategoriaCreate = () => {
         return (
-            <ProductoForm submitCategoria={(newCategoria)=>this.createCategoria(newCategoria)} categoria={null} />
+            <ProductoForm submitProducto={(producto)=>this.createProducto(producto)} categoria={null} errors={this.state.errors} />
         )
         
     }

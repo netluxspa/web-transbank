@@ -5,6 +5,7 @@ import envioReducer from './envioReducer';
 import paginaReducer from './paginaReducer';
 import userPaginaReducer from './userPaginaReducer'
 import adminPagReducer from './adminPagReducer'
+import productoAdminReducer from './admin/productoAdminReducer';
 
 export default combineReducers({
     carrito: carritoReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
     pagina: paginaReducer,
     userPagina: userPaginaReducer,
     adminPagina: adminPagReducer,
+    productoAdmin: productoAdminReducer,
     form: formReducer
 });

@@ -13,7 +13,7 @@ class CategoriaCreate extends React.Component {
         api.post('/commerce/categoria/',
             newCategoria,
             {headers: {'content-type':'application/json', 'site': localStorage.getItem('site'), 'adminkey': localStorage.getItem('adminkey')}}
-        ).then(res=>history.push('/admin/categorias-tienda'))
+        ).then(res=>history.goBack())
     }
 
 
@@ -30,7 +30,7 @@ class CategoriaCreate extends React.Component {
             <Modal 
                 component={this.renderCategoriaCreate()} 
                 titulo='Crear nueva categoría' 
-                ondismiss={()=>history.push('/admin/categorias-tienda')}
+                ondismiss={()=>history.goBack()}
             />
         )
     }

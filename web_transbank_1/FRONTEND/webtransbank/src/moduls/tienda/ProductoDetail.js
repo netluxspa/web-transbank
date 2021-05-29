@@ -73,7 +73,12 @@ class ProductoDetail extends React.Component {
                         <div className='cont'>
                             <div className='cont_imagen'>
                                 <img 
-                                    src={producto.imagenes[`${this.state.imagenSelectedIndex}`].imagen} alt='asd'  
+                                    src={
+                                        producto && producto.imagenes.length > 0 ?
+                                        producto.imagenes[`${this.state.imagenSelectedIndex}`].imagen :
+                                        ''
+                                    } 
+                                    alt='asd'  
                                 />
                                 <div  className='contSelectorImage'>
                                     {producto.imagenes.map(i=>(

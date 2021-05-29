@@ -60,7 +60,14 @@ class ProductoCarrito extends React.Component {
             return (
                 <div className='productoCarritoCont'>
                     <div className='imagen'>
-                        <img style={{width:"40px", height: "40px"}} src={producto.imagenes[0].imagen} alt='asd' />
+                        <img style={{width:"40px", height: "40px"}} 
+                            src={
+                                producto && producto.imagenes.length > 0 ?
+                                producto.imagenes[0].imagen :
+                                ''
+                                } 
+                            alt='asd' 
+                        />
                     </div>
                     <div className='titulo'>
                         <span>

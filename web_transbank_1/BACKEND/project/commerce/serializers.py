@@ -36,7 +36,7 @@ class TextoProductoSerializer(serializers.ModelSerializer):
 class ProductoSerializer(serializers.ModelSerializer):
     imagenes = ImagenSerializer(many=True, read_only=True)
     textos = TextoProductoSerializer(many=True, read_only=True)
-    categoria = CategoriaSerializer(many=False, read_only=True)
+    categoria_detail = CategoriaSerializer(source='categoria', many=False, read_only=True)
     class Meta:
         model = Producto
         fields = '__all__'

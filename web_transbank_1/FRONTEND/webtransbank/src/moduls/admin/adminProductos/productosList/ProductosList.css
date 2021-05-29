@@ -16,12 +16,11 @@
 }
 
 .gridProductos .content {
-    
+    padding:0 20px;
 }
 
-.gridProductos .options {
-    display: flex;
-    justify-content: flex-end;
+.gridProductos .options  {
+    text-align: right;
 }
 
 .smallText {

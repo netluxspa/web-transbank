@@ -15,6 +15,10 @@ export const REMOVE_ADMIN_PAGINA = 'REMOVE_ADMIN_PAGINA';
 
 
 
+export const SELECT_ADMIN_PRODUCT = 'SELECT_ADMIN_PRODUCT';
+
+
+
 
 
 

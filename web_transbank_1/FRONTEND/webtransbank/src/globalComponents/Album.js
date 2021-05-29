@@ -125,7 +125,11 @@ function Album({productos, categorias, selectCategoria, tienda, categoriaSelecte
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
-                    image={card.imagenes[0].imagen}
+                    image={
+                      card && card.imagenes.length >0 ?
+                      card.imagenes[0].imagen :
+                      ''
+                    }
                     title="Image title"
                   />
                   <CardContent className={classes.cardContent}>
