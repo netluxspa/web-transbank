@@ -6,13 +6,20 @@ import paginaReducer from './paginaReducer';
 import userPaginaReducer from './userPaginaReducer'
 import adminPagReducer from './adminPagReducer'
 import productoAdminReducer from './admin/productoAdminReducer';
+import imagenProductoSelectedReducer from './admin/imagenProductoSelectedReducer';
+import optionProductoAdminReducer from './admin/optionProductoAdminReducer';
+import tiendaReducer from './tiendaReducer';
+
 
 export default combineReducers({
     carrito: carritoReducer,
-    envio: envioReducer,
+    adress: envioReducer,
     pagina: paginaReducer,
+    tienda: tiendaReducer,
     userPagina: userPaginaReducer,
     adminPagina: adminPagReducer,
     productoAdmin: productoAdminReducer,
+    imagenProductoAdmin: imagenProductoSelectedReducer,
+    optionProductoAdmin: optionProductoAdminReducer,
     form: formReducer
 });

@@ -1,0 +1,23 @@
+.contCajasList{
+    margin: 20px 0 0 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 10px 20px;
+}
+
+.contCajasList > div {
+    white-space: nowrap;
+    padding: 0 20px;
+}
+
+
+.contCajasList_headers {
+}
+
+.contCajasList_item {
+
+}
+
+.textRight {
+    text-align: right;
+}

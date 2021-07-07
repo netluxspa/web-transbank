@@ -129,9 +129,9 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
@@ -155,7 +155,8 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://localhost:3001",
 ]
 
 

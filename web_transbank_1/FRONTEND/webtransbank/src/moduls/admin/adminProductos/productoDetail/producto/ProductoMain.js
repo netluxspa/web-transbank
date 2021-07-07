@@ -14,7 +14,7 @@ const ProductoMain = ({producto}) => {
 
     const dispatch = useDispatch()
 
-    const [descripcion, setDescripcion] = useState(producto.descripcion)
+    const [descripcion, setDescripcion] = useState('')
 
     const [success, setSuccess] = useState(null)
 
@@ -59,7 +59,8 @@ const ProductoMain = ({producto}) => {
         )
     }
 
-    return renderAdminTienda();
+    // return renderAdminTienda();
+    return 'producto main';
 }
 
 export default ProductoMain;

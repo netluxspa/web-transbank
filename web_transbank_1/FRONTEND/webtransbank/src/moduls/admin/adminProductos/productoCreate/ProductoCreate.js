@@ -34,7 +34,7 @@ class ProductoCreate extends React.Component {
             <Modal 
                 component={this.renderCategoriaCreate()} 
                 titulo='Crear nuevo producto' 
-                ondismiss={()=>history.push('/admin/productos-tienda')}
+                ondismiss={()=>history.goBack()}
             />
         )
     }

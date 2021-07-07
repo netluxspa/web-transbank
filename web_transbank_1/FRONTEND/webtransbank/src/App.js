@@ -15,6 +15,7 @@ import Admin from './moduls/admin/Admin'
 import Auth from './moduls/auth/Auth'
 import { ADD_PAGINA, ADD_USER_PAGINA, ADD_ADMIN_PAGINA ,REMOVE_USER_PAGINA } from './actions/types';
 import { getUser } from './actions/userPagina';
+import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 
 
 
@@ -23,14 +24,18 @@ class App extends React.Component {
     super(props);
     this.state = {
       pagina: null,
-      error: null
+      error: null,
+      theme: null
     }
   }
 
   componentDidMount(){
     this.verificarSitio();
+    this.getColor();
     
   }
+
+
 
   getUser = () =>{
     const userkey = localStorage.getItem('userkey')
@@ -57,7 +62,7 @@ class App extends React.Component {
           if (res && res.data) {
               this.props.dispatch({type: ADD_ADMIN_PAGINA, payload: res.data})
           }
-      })
+      }).catch(()=>this.props.dispatch({type: ADD_ADMIN_PAGINA, payload: false}))
     }
   }
 
@@ -78,25 +83,54 @@ class App extends React.Component {
     }).catch(err=>{this.setState({error: "Sitio no encontrado"})})
   }
 
-  renderReturn = (
-        <div>
-          <div style={{position: "sticky", top: "0", zIndex: "1000"}}>
-            <Nav  />
+  getColor = () => {
+    const host = window.location.host;
+    api.get(`/commerce/tienda/?pagina__codigo=${host}`,
+      {headers: {"Content-Type": "application/json"}}
+    ).then(res =>{
+      if (res && res.data.length > 0 && res.data[0].color_primary && res.data[0].color_secondary ){
+        const theme = createMuiTheme({
+          palette: {
+             primary: {
+                main: res.data[0].color_primary // This is an orange looking color
+                       },
+             secondary: {
+                main: res.data[0].color_secondary //Another orange-ish color
+                        }
+                   },
+            // fontFamily: font // as an aside, highly recommend importing roboto font for Material UI projects! Looks really nice
+            });
+            this.setState({theme: theme})
+            console.log(this.state.theme)
+      }
+    })
+  }
+
+
+
+
+  renderReturn = () =>{
+      return (
+      <ThemeProvider theme={this.state.theme }>
+          <div>
+            <div style={{position: "sticky", top: "0", zIndex: "1000"}}>
+              <Nav  />
+            </div>
+            <Router history={history}>
+              <Route exact  path="/">
+                  <Redirect to="/admin" />
+              </Route>
+              <Route path='/auth' component={Auth}></Route>
+              <Route path='/clientes' component={Clientes}></Route>
+
+
+              
+              <Route path='/admin' component={Admin}></Route>
+              <Route  path="/tienda" component={()=><Tienda pagina={this.state.pagina} />} />
+            </Router>
           </div>
-          <Router history={history}>
-            <Route exact  path="/">
-                <Redirect to="/tienda" />
-            </Route>
-            <Route path='/auth' component={Auth}></Route>
-            <Route path='/clientes' component={Clientes}></Route>
-
-
-            
-            <Route path='/admin' component={Admin}></Route>
-            <Route  path="/tienda" component={()=><Tienda pagina={this.state.pagina} />} />
-          </Router>
-        </div>
-  )
+        </ThemeProvider>)
+  }
 
   render() {
     const {pagina, error} = this.state;
@@ -106,7 +140,7 @@ class App extends React.Component {
       return <div>{error}</div>
     } else {
       return (
-        this.renderReturn
+        this.renderReturn()
       );
     }
 

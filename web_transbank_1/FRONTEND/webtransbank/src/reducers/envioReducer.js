@@ -1,20 +1,36 @@
-import { ADD_ENVIO } from '../actions/types'
+import { ADD_ENVIO, ADD_VALID_ADRESS } from '../actions/types'
 
 
 const initialState = {
-    nombre: '', 
-    fono: '',
-    ciudad: '',
-    direccion: '',
-    detalle: ''
+
+    dataForm: {
+        calle: '', 
+        numCalle: '',
+        ciudad: '',
+        detalle: '',
+        pais: 'chile',
+        numContacto: ''
+    },
+
+    validAdress: '',
+    lat:'', 
+    lng: ''
+
+
 }
 
 const envioReducer = (state = initialState, action) => {
 
     switch (action.type) {
         case ADD_ENVIO:
-            console.log(action)
-            return {...state, [action.payload.label]: action.payload.value};
+            return  {...state, dataForm: action.payload};
+        case ADD_VALID_ADRESS:
+            return  {
+                ...state, 
+                validAdress: action.payload.validAdress, 
+                lng: action.payload.lng, 
+                lat: action.payload.lat
+            };
         default:
             return state;
     }

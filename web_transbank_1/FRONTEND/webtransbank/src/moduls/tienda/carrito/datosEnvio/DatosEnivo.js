@@ -4,13 +4,16 @@ import { connect } from 'react-redux';
 import { ADD_ENVIO } from '../../../../actions/types'
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import CalculatorTarifa from './calculatorTarifa/CalculatorTarifa';
+import ValidateAdress from './validateAdress/ValidateAdress';
+
 
 
 import './datosEnvioStyle.css'
 
 class DatosEnvio extends React.Component {
 
-    
+    state = {tarifa: null, ciudad: ''}
 
     renderInput = ({input, valor, label, labelReducer, meta }) => {
         return (
@@ -30,10 +33,25 @@ class DatosEnvio extends React.Component {
       };
 
 
+    recibeTarifa = t => {
+        this.setState({tarifa: t.valor})
+    }
+
+
     render(){
         const {nombre, fono, direccion, ciudad, detalle} = this.props.envio;
         const { dispatch } = this.props;
         return (
+            <div>
+                <div>
+                    <CalculatorTarifa emitTarifa={(t)=>console.log(t)} />
+                </div>
+
+                <div>
+                    <ValidateAdress />
+                </div>
+
+
             <div className='contDatosEnvio'>
                 <div className='titulo'>
                     <Typography variant="h5"  color="textPrimary" paragraph>
@@ -59,7 +77,8 @@ class DatosEnvio extends React.Component {
                     <Field name="detalle" labelReducer='detalle' component={this.renderInput} label="Detalle" valor={detalle} dispatch={dispatch} />
                 </div> 
             </div>
-        
+
+            </div>
         )
     }
 }

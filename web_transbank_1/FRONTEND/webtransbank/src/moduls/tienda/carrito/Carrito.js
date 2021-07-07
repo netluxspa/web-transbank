@@ -8,8 +8,7 @@ import logoTransbank from '../../../assets/web_pay.png'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Alert from '@material-ui/lab/Alert';
-
- 
+import DatosEnvio2 from './datosEnvio2/DatosEnvio2';
 
 import history from '../../../history'
 
@@ -27,7 +26,8 @@ class Carrito extends React.Component {
         this.state = {
             url: null,
             token: null,
-            errorEnvio: ''
+            errorEnvio: '',
+            errorsPago: {}
         }
         window.scrollTo(0, 0);
     }
@@ -40,19 +40,45 @@ class Carrito extends React.Component {
         }
     }
 
-    validateEnvio = (envio) => {
-        for (let index = 0; index < Object.keys(envio).length; index++) {
-            const element = Object.keys(envio)[index];
-            if (envio[element] == ''){
-                return false
-            }
+    renderErrors = (errors) => {
+        const keys = Object.keys(errors)
+        return (
+        keys.map(k=>(
+            <div>
+                {errors[k].map(e=>(
+
+                    <Alert severity="error">{k} - {e}</Alert>
+
+                ))}
+            </div>
+        ))
+        )
+    }
+
+    validateEnvio = (adress) => {
+        var new_errors_pago = {};
+        if (!adress.validAdress){
+            new_errors_pago.direccion = ['Debe ingresar y validar una dirección de entrega.']
         }
-        return true
+        if (!adress.dataForm.numContacto){
+            new_errors_pago.numero = ['Debe ingresar un número de contacto asociado a la entrega.'];
+        }
+        this.setState({
+            errorsPago: new_errors_pago
+        })
+
+        if (adress.validAdress && adress.dataForm.numContacto){
+            return true
+        }else{
+            return false
+        }
+
+
     }
 
     verificateDoTransaction = () =>{
         if (this.props.userPagina) {
-            if (this.validateEnvio(this.props.envio)){
+            if (this.validateEnvio(this.props.adress)){
                 this.createTransaction()
             } else {
                 this.setState({errorEnvio: 'Debe completar los datos del envio para pagar.'})
@@ -69,15 +95,20 @@ class Carrito extends React.Component {
 
     createTransaction = () => {
        var productos = this.props.productos;
-       const envio = this.props.envio;
+
+       const envio = {
+        valid_address:  this.props.adress.validAdress,
+        lat:  this.props.adress.lat,
+        lng:  this.props.adress.lng,
+        numContact: this.props.adress.dataForm.numContacto
+       }
        productos = productos.map(p=>{
            return {producto: p.producto, cantidad: p.cantidad}
        })
        const body = {
             tienda: this.props.tiendaId,
             productos: productos,
-            envio: envio
-           
+            envio: envio,
        }
         const headers = {headers: {"Content-Type":"application/json", "site":localStorage.getItem('site'), "userkey": localStorage.getItem('userkey')}}
         api.post('/commerce/crear-transaccion/', 
@@ -131,12 +162,10 @@ class Carrito extends React.Component {
                     <div className='pagar'>
                         <div>
                             <ResumenPago />
-                            {this.state.errorEnvio ?
+                          
                             <div style={{marginTop: "20px"}}>
-                                <Alert severity="error">{this.state.errorEnvio}</Alert> 
+                                { this.renderErrors(this.state.errorsPago) } 
                             </div>
-                             : 
-                             null}
                             <div className='botonPagar'>
 
                             <Button onClick={()=>this.verificateDoTransaction()} style={{width: "100%"}}
@@ -153,7 +182,8 @@ class Carrito extends React.Component {
         
                     </div>
                     <div className='envio'>
-                        <DatosEnvio />
+                        {/* <DatosEnvio /> */}
+                        <DatosEnvio2 />
                     </div>
                 </div>
             )
@@ -181,7 +211,7 @@ const mapStateToProps = state => {
     return {
         productos: Object.values(state.carrito),
         userPagina: state.userPagina,
-        envio: state.envio,
+        adress: state.adress,
     }
 }
 

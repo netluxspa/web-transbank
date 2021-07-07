@@ -1,5 +1,10 @@
 
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
+import {  Route } from 'react-router-dom';
+
+
+import { SELECT_ADMIN_PRODUCT_OPTION } from '../../../../actions/types';
+import { SELECT_ADMIN_PRODUCT } from '../../../../actions/types';
 
 import Modal from '../../../../components/modal/Modal';
 import history from '../../../../history';
@@ -10,15 +15,22 @@ import Typography from '@material-ui/core/Typography';
 
 
 import ProductoMain from './producto/ProductoMain'
-import ImagenesProducto from './imagenes/ImagenesProducto';
+import ImagenesProducto2 from './imagenes/ImagenesProducto2';
 import TextosProducto from './textos/TextosProducto';
-import { useState } from 'react';
+import FormatoEnvio from './envio/FormatoEnvio';
+
+import api from '../../../../api';
+import AdminHeaders from '../../../../globalComponents/adminHeaders.js/AdminHeaders';
+
+
+import { useState, useEffect } from 'react';
 import './ProductoDetail.css';
 
 
 
-const ProductoDetail = ({producto}) => {
+const ProductoDetail = ({producto, match, optionSelected}) => {
 
+    const dispatch = useDispatch();
 
     const options = [
         {
@@ -29,17 +41,62 @@ const ProductoDetail = ({producto}) => {
         {
             id: 1,
             label: 'Imagenes',
-            component: <ImagenesProducto producto={producto} />
+            component: <ImagenesProducto2 producto={producto} />
         },
         {
             id: 2,
             label: 'Textos',
-            component: <TextosProducto producto={producto} />
+            component: <TextosProducto />
+        },
+        {
+            id: 3,
+            label: 'Envío',
+            component: <FormatoEnvio producto={producto} id={match.params.id} />
         }
     ]
 
     const [selected, setSelected] = useState(options[0])
 
+    const [productoActual, setProductoActual] = useState(null)
+
+
+    useEffect(()=>{
+        if (optionSelected){
+            setSelected(optionSelected)
+        } 
+
+    },[optionSelected])
+
+
+    useEffect(()=> {
+        const productoProps = producto;
+        const { id } = match.params;
+        if (!productoProps){
+            getProducto(id)
+            
+        } else {
+            setProductoActual(productoProps)
+        }
+    });
+
+
+
+    const getProducto = (id) => {
+        const headers = AdminHeaders();
+        api.get('/commerce/producto/' + id + '/', 
+            headers
+        ).then(res=>{
+            setProductoActual(res.data);
+            dispatch({type: SELECT_ADMIN_PRODUCT, payload: res.data})
+        })
+    }
+
+
+    // useEffect(()=>{
+    //         return (()=>{
+    //             dispatch({type: SELECT_ADMIN_PRODUCT_OPTION, payload: null})
+    //         })
+    //     },[])
 
     const renderHeader = (producto) => {
         return (
@@ -69,7 +126,7 @@ const ProductoDetail = ({producto}) => {
                     </div>
                     <div className='small-text'>
                         <Typography style={{fontSize: '1em'}} color="textPrimary">
-                            {producto.categoria_detail.titulo}
+                            { producto.categoria_detail ?  producto.categoria_detail.titulo : 'No'}
                         </Typography>
                     </div>
                     <div className='small-text'>
@@ -91,7 +148,7 @@ const ProductoDetail = ({producto}) => {
                 {options.map(o=>(
                     <div className='padd-0-10'>
                         <Button  key={o.id}
-                            onClick={()=>setSelected(o)}
+                            onClick={()=>{setSelected(o); dispatch({type: SELECT_ADMIN_PRODUCT_OPTION, payload: o})}}
                             variant={
                                 o.id === selected.id ?
                                 'contained' :
@@ -118,13 +175,13 @@ const ProductoDetail = ({producto}) => {
         console.log(window.innerWidth)
         return (
             <div className={`${window.innerWidth > 760 ? 'padd-20-30':'padd-10-30'}`}>
-                {renderHeader(producto)}
+                {productoActual ?  renderHeader(productoActual) : null}
            
          
-                {renderOptions(options, selected)}
+                {selected ? renderOptions(options, selected): null}
                 <br></br>
                 
-                {renderContent(selected)}
+                {selected ? renderContent(selected): null}
             </div>
         )
     }
@@ -140,7 +197,8 @@ const ProductoDetail = ({producto}) => {
 
 const mapStateToProps = (state) => {
     return {
-        producto: state.productoAdmin
+        producto: state.productoAdmin,
+        optionSelected: state.optionProductoAdmin
     }
 }
 

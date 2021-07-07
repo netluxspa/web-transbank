@@ -60,7 +60,7 @@ class ProductoEdit extends React.Component {
             <Modal 
                 component={this.renderProductoEdit(producto)} 
                 titulo='Actualizar un producto' 
-                ondismiss={()=>history.push('/admin/productos-tienda')}
+                ondismiss={()=>history.goBack()}
             />
         )
     }

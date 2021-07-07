@@ -55,9 +55,9 @@ class ResumenPago extends React.Component {
                         <div>{userPagina.nombre}</div>
                         <div>{userPagina.email}</div>
                     </div>
-                    <div className='contDatosCompradorModificar'>
+                    {/* <div className='contDatosCompradorModificar'>
                         <Chip onClick={()=>history.push('/auth/edituser')} size="small" label="Cambiar" />
-                    </div>
+                    </div> */}
                 </div>
             )
         } else {

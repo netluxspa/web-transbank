@@ -173,7 +173,7 @@ function Nav({productosCarrito, userPagina, adminPagina, logout, logoutAdmin }) 
               open={isMenuAdminOpen}
               onClose={handleMenuAdminClose}
             >
-                { adminPagina ?  <MenuItem>{ adminPagina.nombre}</MenuItem> : null}
+                { adminPagina ?  <MenuItem onClick={()=>history.push('/admin/home')}>{ adminPagina.nombre}</MenuItem> : null}
                 { adminPagina ? <MenuItem onClick={()=>logoutAdmin()}> Cerrar sesión admin</MenuItem> : null}
 
             </Menu>

@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
@@ -27,46 +28,38 @@ import requests
 import json
 
 
+def get_or_none(classmodel, **kwargs):
+    try:
+        return classmodel.objects.get(**kwargs)
+    except classmodel.DoesNotExist:
+        return None
+
+
 @api_view(['POST'])
 def transaccionCreate(request):
-    try:
-        pagina = Pagina.objects.get(codigo=request.META.get('HTTP_SITE'))
-    except:
-        pagina = False 
-
-
+    pagina = get_or_none(Pagina, codigo=request.META.get('HTTP_SITE'))
     if pagina:
-        try:
-            tienda = Tienda.objects.get(pagina=pagina)
-        except:
-            tienda = False 
-        
+        tienda = get_or_none(Tienda, pagina=pagina)
         if tienda:
-            try:
-                token = TokenUserPagina.objects.get(token=request.META.get('HTTP_USERKEY'))
-            except:
-                token = False 
+            token = get_or_none(TokenUserPagina, token=request.META.get('HTTP_USERKEY'))
             if token:
                 user = token.userPagina
                 if user.pagina.codigo == pagina.codigo:
-
                     try:
                         envio = request.data['envio']
                     except:
                         envio = False
 
                     if envio:
-                        print(envio)
                         try:
-                            nombre_receptor = envio["nombre"]
-                            direccion = envio["direccion"]
-                            ciudad = envio["ciudad"]
-                            fono = envio["fono"]
-                            detalle = envio["detalle"]
+                            valid_address = envio["valid_address"]
+                            numContact = envio["numContact"]
+                            lat = envio["lat"]
+                            lng = envio["lng"]
+                            
                             envio_data = True
                         except:
                             envio_data = False 
-                        print('envio_data', envio_data)
                         if envio_data:
                             try:
                                 productos = request.data["productos"]
@@ -88,7 +81,7 @@ def transaccionCreate(request):
                                         return Response({'error': 'Información inválida'}, status=status.HTTP_400_BAD_REQUEST)
 
                                 if tienda.codigo_comercio and tienda.llave_secreta:
-                                    new_pedido = Pedido.objects.create(tienda=tienda, userPagina=user, nombre_receptor=nombre_receptor, direccion=direccion, ciudad=ciudad, fono=fono, detalle=detalle)
+                                    new_pedido = Pedido.objects.create(tienda=tienda, userPagina=user, numContact=numContact, valid_address=valid_address, lat=lat, lng=lng)
                                     new_pedido.save()
 
                                     amount = 0
@@ -119,6 +112,7 @@ def transaccionCreate(request):
                                     json_dump = json.dumps(data_set)
                                     
                                     r = requests.post(url, data=json_dump, headers=headers)
+                                    print('createtransaction', r)
                                     new_pedido.token_ws = r.json()["token"]
                                     new_pedido.save()
                                     return Response(r.json())
@@ -151,8 +145,6 @@ def transaccionCreate(request):
 
     else:
         return Response({'error': 'Error de sistema'}, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 
@@ -191,10 +183,10 @@ def return_transbank(request):
 
                     new_transaction.save()
                     pedido.transaction = new_transaction
+                    pedido.status = 'FAILED_PAYMENT'
                     pedido.save()
 
     return redirect('http://' + tienda + '/tienda/seguimiento/' + codigo_seguimiento)
-
 
 def transaction_status(token, codigo_seguimiento):
     try:
@@ -242,6 +234,10 @@ def transaction_status(token, codigo_seguimiento):
                 new_transaction.installments_number=r.json()["installments_number"]
                 new_transaction.save()
                 pedido.transaction = new_transaction
+                if new_transaction.response_code == 0:
+                    pedido.status = 'PENDING'
+                else:
+                    pedido.status = 'FAILED_PAYMENT'
                 pedido.save()
 
         if r.json()["response_code"] == 0:
@@ -271,7 +267,9 @@ def sendEmailToComprador(codigo_seguimiento):
             'productos':productos,
             'total':  serializerPedido.data["monto"],
             'tienda': pedido.tienda.pagina.codigo,
-            'codigo_seguimiento': codigo_seguimiento
+            'codigo_seguimiento': codigo_seguimiento,
+            'valid_adress': pedido.valid_address,
+            'numContact': pedido.numContact
         }
 
         subject = 'Compraste en ' + pedido.tienda.pagina.codigo
@@ -311,5 +309,3 @@ def sendEmailToVendedor(codigo_seguimiento):
 
 
 
-
-        

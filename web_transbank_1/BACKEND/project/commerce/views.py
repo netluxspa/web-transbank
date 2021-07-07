@@ -14,6 +14,41 @@ class TiendaViewSet(viewsets.ModelViewSet):
     filter_fields = ('pagina','pagina__codigo',)
 
 
+class ConfigLogisticaViewSet(viewsets.ModelViewSet):
+    queryset = ConfigLogistica.objects.all()
+    serializer_class = ConfigLogisticaSerializer
+    filter_backends = (DjangoFilterBackend,)
+    permission_classes = (OnlyAdminPerPag,)
+    filter_fields = ('tienda', 'tienda__pagina__codigo')
+
+
+
+class PoliticasEnvioGlobalViewSet(viewsets.ModelViewSet):
+    queryset = PoliticasEnvioGlobal.objects.all()
+    serializer_class = PoliticasEnvioGlobalSerializer
+    filter_backends = (DjangoFilterBackend,)
+    permission_classes = (OnlyAdminPerPag,)
+
+
+
+
+class PoliticasEnvioViewSet(viewsets.ModelViewSet):
+    queryset = PoliticasEnvio.objects.all()
+    serializer_class = PoliticasEnvioSerializer
+    filter_backends = (DjangoFilterBackend,)
+    permission_classes = (OnlyAdminPerPag,)
+    filter_fields = ('tienda', 'tienda__pagina__codigo')
+
+
+class CajaViewSet(viewsets.ModelViewSet):
+    queryset = Caja.objects.all()
+    serializer_class = CajaSerializer
+    filter_backends = (DjangoFilterBackend,)
+    permission_classes = (OnlyAdminPerPag,)
+    filter_fields = ('tienda', 'tienda__pagina__codigo')
+
+
+
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
@@ -28,13 +63,21 @@ class ProductoViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('tienda', 'url',)
 
+class FormatoEnvioViewSet(viewsets.ModelViewSet):
+    queryset = FormatoEnvio.objects.all()
+    serializer_class = FormatoEnvioSerializer
+    permission_classes = (OnlyAdminPerPag,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('producto',)
+
+
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
     filter_backends = (DjangoFilterBackend,)
-    permission_classes = (OnlyCreatePerUserAndListPerUserAndAdminAndRetrievePerAll,)
-    http_method_names = ['get']
+    # permission_classes = (OnlyCreatePerUserAndListPerUserAndAdminAndRetrievePerAll,)
+    # http_method_names = ['get']
     filter_fields = ('codigo_seguimiento', 'tienda__pagina__codigo', 'userPagina', )
 
     def create(self, request, *args, **kwargs):
@@ -64,4 +107,33 @@ class ProductosPedidoViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoPedidoSerializer
     # filter_backends = (DjangoFilterBackend,)
     # filter_fields = ('tienda', 'url',)
+
+
+class ImagenViewSet(viewsets.ModelViewSet):
+    queryset = Imagen.objects.all()
+    serializer_class = ImagenSerializer
+    permission_classes = (OnlyAdminPerPag,)
+    # filter_backends = (DjangoFilterBackend,)
+    # filter_fields = ('tienda', 'url',)
+
+
+
+class TextoProductoViewSet(viewsets.ModelViewSet):
+    queryset = TextoProducto.objects.all()
+    serializer_class = TextoProductoSerializer
+    permission_classes = (OnlyAdminPerPag,)
+    # filter_backends = (DjangoFilterBackend,)
+    # filter_fields = ('tienda', 'url',)
+
+class ParrafoViewSet(viewsets.ModelViewSet):
+    queryset = Parrafo.objects.all()
+    serializer_class = ParrafoSerializer
+    # permission_classes = (OnlyAdminPerPag,)
+    # filter_backends = (DjangoFilterBackend,)
+    # filter_fields = ('tienda', 'url',)
+
+
+
+
+    
 

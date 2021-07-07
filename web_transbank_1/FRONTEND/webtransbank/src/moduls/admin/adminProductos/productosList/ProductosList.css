@@ -3,6 +3,7 @@
     margin: auto;
     display: grid;
     grid-template-columns: 1fr;
+    overflow: auto;
 }
 
 .gridProductos > div {

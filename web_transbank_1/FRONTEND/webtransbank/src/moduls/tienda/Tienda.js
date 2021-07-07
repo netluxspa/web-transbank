@@ -1,4 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { ADD_TIENDA } from '../../actions/types';
+
+
 import { Route } from 'react-router-dom';
 import api from './../../api'
 import ProductosList from './ProductoList'
@@ -37,6 +42,12 @@ class Tienda extends React.Component {
         ).then(res =>{
           if (res && res.data.length > 0){
             this.setState({tienda: res.data[0]});
+            this.props.dispatch(
+              {
+                type: ADD_TIENDA,
+                payload: res.data[0]
+              }
+            )
             this.getProductos();
             this.getCategorias();
           }
@@ -116,4 +127,14 @@ class Tienda extends React.Component {
 
 }
 
-export default Tienda;
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+      dispatch: (obj)=> dispatch(obj),
+  }
+};
+
+
+export default connect(null, mapDispatchToProps)(Tienda);
+
+

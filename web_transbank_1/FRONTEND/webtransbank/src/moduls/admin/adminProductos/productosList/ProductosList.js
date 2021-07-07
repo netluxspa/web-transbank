@@ -1,14 +1,19 @@
 import { connect } from 'react-redux';
-import { SELECT_ADMIN_PRODUCT } from '../../../../actions/types'
+import { SELECT_ADMIN_PRODUCT,SELECT_ADMIN_PRODUCT_OPTION } from '../../../../actions/types'
 
 import React from 'react';
 import Modal from '../../../../components/modal/Modal'
+
 
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ViewComfyIcon from '@material-ui/icons/ViewComfy';
 import Typography from '@material-ui/core/Typography';
+
+import MenuItem from '@material-ui/core/MenuItem';
+
+import Menu from './Menu';
 
 
 
@@ -17,6 +22,7 @@ import history from '../../../../history'
 import api from '../../../../api'
 
 import './ProductosList.css'
+import { positions } from '@material-ui/system';
 
 
 
@@ -48,6 +54,9 @@ class ProductosList extends React.Component {
     }
 
     goEditProducto = p => {
+        if (this.props.productoSelected && p.id !== this.props.productoSelected.id){
+            this.props.dispatch({type:SELECT_ADMIN_PRODUCT_OPTION, payload: null});
+        }
         this.props.dispatch({type:SELECT_ADMIN_PRODUCT, payload: p});
         history.push(`/admin/productos-tienda/detail/${p.id}`);
     }
@@ -55,7 +64,7 @@ class ProductosList extends React.Component {
     renderProductosList = (productos) => {
         return (
             <div className='gridProductos'>
-                <div style={{display: 'flex', justifyContent:'flex-end'}}>  
+                <div style={{display: 'flex',  position:'sticky', right:'0'}}>  
                     <Button onClick={()=>history.push('/admin/productos-tienda/new')} className='smallText' variant="contained" size="small" color="primary">
                         Crear
                     </Button>
@@ -96,12 +105,18 @@ class ProductosList extends React.Component {
                                 </Typography>
                             </div>  
                             <div className='options'> 
-                                <Button onClick={()=>history.push(`/admin/productos-tienda/edit/${p.id}`)} className='smallText' style={{marginRight:'10px'}} variant="outlined" size="small" color="primary">
+
+                                <Menu 
+                                    goMainEditProducto={()=>history.push(`/admin/productos-tienda/edit/${p.id}`)}
+                                    goEspecificEditProducto={()=>this.goEditProducto(p) }
+                                />
+
+                                {/* <Button onClick={()=>history.push(`/admin/productos-tienda/edit/${p.id}`)} className='smallText' style={{marginRight:'10px'}} variant="outlined" size="small" color="primary">
                                     <EditIcon />
                                 </Button>
                                 <Button onClick={()=>this.goEditProducto(p) } className='smallText'  variant="outlined" size="small" color="secondary">
                                         <ViewComfyIcon />
-                                </Button>
+                                </Button> */}
                             </div>
                         </div>
                 ))}
@@ -114,7 +129,18 @@ class ProductosList extends React.Component {
         const {productos} = this.state;
         if (productos) {
             if (productos.length == 0){
-                return 'No hay productos creados'
+                return (
+                    <div>
+                         <div style={{display: 'flex', justifyContent:'flex-end'}}>  
+                            <Button onClick={()=>history.push('/admin/productos-tienda/new')} className='smallText' variant="contained" size="small" color="primary">
+                                Crear
+                            </Button>
+                        </div>
+                        <div>
+                            No hay productos creados
+                        </div>
+                    </div>
+                )
             } else {
                 return(
                    this.renderProductosList(productos)
@@ -130,7 +156,7 @@ class ProductosList extends React.Component {
             <Modal 
                 component={this.render2()} 
                 titulo='Edición de productos de la tienda' 
-                ondismiss={()=>history.push('/tienda')}
+                ondismiss={()=>history.goBack()}
             />
         )
     }
@@ -143,8 +169,14 @@ const mapDispatchToProps = (dispatch) => {
     }
 };
 
+const mapStateToProps = state => {
+    return {
+        productoSelected: state.productoAdmin
+    }
+}
 
-export default connect(null, mapDispatchToProps)(ProductosList);
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductosList);
 
 
 

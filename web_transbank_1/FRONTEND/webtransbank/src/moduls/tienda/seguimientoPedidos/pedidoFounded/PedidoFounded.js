@@ -159,16 +159,14 @@ class PedidoFounded  extends React.Component {
         return (
             <div className='contPedidosGrid contInfoPago'>
                 <div className='supraHeader supraHeaderPago'> Información del envío </div>
-                <div className='header line_bottom'>Nombre del receptor</div>
-                <div className='line_bottom'>{pedido.nombre_receptor}</div>
-                <div className='header line_bottom'>Fono del receptor</div>
-                <div className='line_bottom'>{pedido.fono}</div>
-                <div className='header line_bottom'>Ciudad</div>
-                <div className='line_bottom'>{pedido.ciudad}</div>
-                <div className='header line_bottom'>Dirección</div>
-                <div className='line_bottom'> {pedido.direccion}</div>
-                <div className='header'>Detalle</div>
-                <div>{pedido.detalle}</div>
+                <div className='header line_bottom'>Dirección de entrega</div>
+                <div className='line_bottom'>{pedido.valid_address}</div>
+                <div className='header line_bottom'>Número de contacto</div>
+                <div className='line_bottom'>{pedido.numContact}</div>
+                <div className='header line_bottom'>lat</div>
+                <div className='line_bottom'>{pedido.lat}</div>
+                <div className='header line_bottom'>lng</div>
+                <div className='line_bottom'>{pedido.lng}</div>
             </div>
         )
     }
