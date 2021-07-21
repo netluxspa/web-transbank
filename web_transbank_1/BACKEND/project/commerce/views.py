@@ -4,6 +4,7 @@ from rest_framework import serializers
 from .models import *
 from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
 from pag.permissions import OnlyAdminPerPag, OnlyCreatePerUserAndListPerUserAndAdminAndRetrievePerAll
 
 class TiendaViewSet(viewsets.ModelViewSet):
@@ -71,14 +72,33 @@ class FormatoEnvioViewSet(viewsets.ModelViewSet):
     filter_fields = ('producto',)
 
 
+class PedidoFilter(filters.FilterSet):
+    no_envio = filters.BooleanFilter(field_name='envio', lookup_expr='isnull')
+
+    class Meta:
+        model=Pedido
+        fields=('codigo_seguimiento', 'tienda__pagina__codigo', 'transaction__response_code', 'userPagina', 'envio', 'no_envio')
+    
+
+
+class EnvioViewSet(viewsets.ModelViewSet):
+    queryset = Envio.objects.all()
+    serializer_class = EnvioSerializer
+
+
+class EnvioPedidoViewSet(viewsets.ModelViewSet):
+    queryset = EnvioPedido.objects.all()
+    serializer_class = EnvioPedidoSerializer
+
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
     filter_backends = (DjangoFilterBackend,)
+    
     # permission_classes = (OnlyCreatePerUserAndListPerUserAndAdminAndRetrievePerAll,)
     # http_method_names = ['get']
-    filter_fields = ('codigo_seguimiento', 'tienda__pagina__codigo', 'userPagina', )
+    filterset_class = PedidoFilter
 
     def create(self, request, *args, **kwargs):
         productos = request.data["productos"]

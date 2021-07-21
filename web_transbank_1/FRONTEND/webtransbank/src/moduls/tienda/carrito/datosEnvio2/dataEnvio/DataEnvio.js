@@ -28,7 +28,8 @@ const DataEnvio = ({adressStore, validAdress}) => {
         detalle: adressStore.detalle, 
         ciudad: adressStore.ciudad, 
         pais: adressStore.pais,
-        numContacto: adressStore.numContacto
+        numContacto: adressStore.numContacto,
+        nombreReceptor: adressStore.nombreReceptor,
     })
 
     const [openValidate, setOpenValidate] = useState(false);
@@ -51,7 +52,7 @@ const DataEnvio = ({adressStore, validAdress}) => {
     }
 
     const validateData = () => {
-        if (dataEnvio.calle && dataEnvio.numCalle && dataEnvio.ciudad && dataEnvio.pais && dataEnvio.numContacto){
+        if (dataEnvio.calle && dataEnvio.numCalle && dataEnvio.ciudad && dataEnvio.pais && dataEnvio.numContacto  && dataEnvio.nombreReceptor){
             return true
         } else {
             return false
@@ -125,7 +126,7 @@ const DataEnvio = ({adressStore, validAdress}) => {
         return (
             <div>
                 <Typography color='textoSecondary' style={{fontSize:'0.8em'}}>
-                    Para continuar necesitamos tu dirección y un número de contacto 
+                    Para continuar necesitamos tu dirección y datos del receptor 
                 </Typography>
             </div>
         )
@@ -162,6 +163,17 @@ const DataEnvio = ({adressStore, validAdress}) => {
                     </div>
                     <div>
                     <Typography style={{fontWeight:'500', fontSize: '0.8em'}}>Teléfono de contacto</Typography>    
+                    </div>
+                </div>
+                <br>
+                </br>
+
+                <div>
+                    <div>
+                        <Typography color='textSecondary' style={{fontWeight:'600'}}>{dataEnvio.nombreReceptor}</Typography>    
+                    </div>
+                    <div>
+                    <Typography style={{fontWeight:'500', fontSize: '0.8em'}}>Receptor</Typography>    
                     </div>
                 </div>
                 <br></br>
@@ -219,6 +231,7 @@ const DataEnvio = ({adressStore, validAdress}) => {
 
 
 const mapStateToPros = state => {
+    console.log(state.adress.dataForm)
     return {
         adressStore: state.adress.dataForm ,
         validAdress: state.adress.validAdress 

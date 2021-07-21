@@ -47,8 +47,6 @@ def getCity(request):
 def getEnvioCost(request):
     if (
         request.data["productos"] and 
-        request.data["init"] and 
-        request.data["distance"] >= 0 and 
         request.data["site"] and 
         request.data["lat"] and 
         request.data["lng"] and 
@@ -59,8 +57,6 @@ def getEnvioCost(request):
             request.data["lat"], 
             request.data["lng"], 
             request.data["site"],
-            request.data["distance"],
-            request.data["init"],
             request.data["finish"],
             request.data["productos"]  
         )
@@ -71,11 +67,20 @@ def getEnvioCost(request):
             return Response(cost, status=status.HTTP_400_BAD_REQUEST)
 
     else:
-        return Response({"error": 'Datos inválidos'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error":{"formato": ["Datos inválidos"]}}, status=status.HTTP_400_BAD_REQUEST)
     
 
-def calulateEnvioCost(lat, lng, site, distance, init, finish, productos):
+def calulateEnvioCost(lat, lng, site, finish, productos):
+
+    print('productos', productos)
+
     politica = PoliticasEnvio.objects.get(tienda__pagina__codigo=site)
+    init = get_or_none(Tienda, pagina__codigo=site)
+    if init:
+        init = init.starken_origen_code
+    else:
+        return {"status": False,  "error":{"parámetros": ["Parámetros insuficientes"]}}
+
     if politica:
         politica_envio = politica.politica_envio.codigo
         ranzo_zonal = politica.rango_zonal
@@ -86,11 +91,11 @@ def calulateEnvioCost(lat, lng, site, distance, init, finish, productos):
                 distancia = calculateDistance(coordenates.lat, coordenates.lng, lat, lng).km
 
                 if distancia > ranzo_zonal:
-                    return {"status": False, "error": "No hacemos envíos a esa zona"}
+                    return {"status": False,  "error":{"limitaciones": ["No hacemos envíos a esa zona"]}}
                 else:
                     return getSelfCost(int(distancia), site, productos)
             else:
-                return {"status": False, "error": "Parámetros insuficientes."}
+                return {"status": False,  "error":{"parámetros": ["Parámetros insuficientes."]}}
                 
 
         elif politica_envio == 'EXTERNA':
@@ -107,10 +112,10 @@ def calulateEnvioCost(lat, lng, site, distance, init, finish, productos):
                 else:
                     return getSelfCost(int(distancia), site, productos)
             else:
-                return {"status": False, "error": "Parámetros insuficientes."}
+                return {"status": False, "errors": ["Parámetros insuficientes."]}
 
     else:
-        return {"status": False, "error": "Parámetros insuficientes."}
+        return {"status": False, "errors": ["Parámetros insuficientes."]}
 
 
 def calculateDistance(lat1, lng1, lat2, lng2):
@@ -147,12 +152,12 @@ def prepareStarkenData(init, finish, productos):
     sobre = True
     for i in productos:
         try:
-            formato = FormatoEnvio.objects.get(producto=i["id"])
+            formato = FormatoEnvio.objects.get(producto=i["producto"])
         except:
             formato = False
         if formato:
             if formato.solo_zona:
-                return {"status": False, "error": "Hay un producto inválido"}
+                return {"status": False,  "error":{"formato": ["Hay un producto inválido"]}}
             else:
                 if formato.sobre == False:
                     if sobre:
@@ -163,9 +168,9 @@ def prepareStarkenData(init, finish, productos):
                         vol_caja =(formato.caja.alto * formato.caja.ancho * formato.caja.largo)*cant_cajas
                         volumenTotal += vol_caja
                     else:
-                        return {"status": False,  "error": "Hay un producto inválido"}
+                        return {"status": False,  "error":{"formato": ["Hay un producto inválido"]}}
         else:
-            return {"status": False, "error": "Hay un producto inválido"}
+            return {"status": False,  "error":{"formato": ["Hay un producto inválido"]}}
     if sobre:
         volumenTotal=1
         pesoTotal=1
@@ -210,9 +215,9 @@ def calculateStarkenCost(inicio, final, largo, ancho, alto, peso, sobre):
         if r.status_code == 201:
             return {"status": True, "precio": r.json()["precio"], "transportista":"STARKEN"}
         else:
-            return {"status": False, "error": "Error al obtener los datos de envío"}
+            return {"status": False, "error": {"envio":["Error al obtener los datos de envío."]}}
     except:
-        return {"status": False, "error": "Error al obtener los datos de envío. Compruebe su conexión a internet"}
+        return {"status": False, "error": {"internet":["Error al obtener los datos de envío. Compruebe su conexión a internet"]}}
 
 
 def getSelfCost(distance, site, productos):
@@ -229,7 +234,7 @@ def getSelfCost(distance, site, productos):
         else:
             return peso_volumen
     else:
-        return {"status": False, "error":"Datos de envío no definidos"}
+        return {"status": False,  "error":{"formato": ["Datos de envío no válidos"]}}
 
 
 def calulatePesoVolumen(productos):
@@ -238,13 +243,13 @@ def calulatePesoVolumen(productos):
     sobre = True
     for i in productos:
         try:
-            formato = FormatoEnvio.objects.get(producto=i["id"])
+            formato = FormatoEnvio.objects.get(producto=i["producto"])
         except:
             formato = False
 
         if formato:
             if formato.solo_zona:
-                return {"status": False, "error": "Hay un producto inválido"}
+                return {"status": False, "error":{"formato": ["Hay un producto inválido"]}}
             else:
                 if formato.sobre == False:
                     if sobre:
@@ -255,10 +260,10 @@ def calulatePesoVolumen(productos):
                         vol_caja =(formato.caja.alto * formato.caja.ancho * formato.caja.largo)*cant_cajas
                         volumen += vol_caja
                     else:
-                        return {"status": False,  "error": "Hay un producto inválido"}
+                        return {"status": False,  "error":{"formato": ["Hay un producto inválido"]}}
                 
         else:
-            return {"status": False, "error": "Error al obtener formato de productos"}
+            return {"status": False,  "error":{"formato": ["Error al obtener formato de productos"]}}
 
     if sobre:
         peso=1

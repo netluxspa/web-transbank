@@ -7,6 +7,10 @@ import AdminProductos from './adminProductos/AdminProductos'
 import AdminAuth from './adminAuth/AdminAuth';
 import AdminEnvio from './adminEnvio/AdminEnvio';
 
+import EnvioCrud from './gestionPedidos/adminPedidos/envioCrud/EnvioCrud';
+
+import PreparacionEnvio from './gestionPedidos/adminPedidos/preparacionEnvio/PreparacionEnvio';
+
 import React from 'react';
 import { connect, useDispatch } from 'react-redux';
 
@@ -49,12 +53,14 @@ const Admin = ({admin, tienda}) => {
                 if (admin) {
                     return (
                         <React.Fragment>
-                            <Route path='/admin/home'  component={AdminHome} />
+                            <Route path='/admin' exact  component={AdminHome} />
+                            <Route path='/admin/home'><Redirect to="/admin" /></Route>
                             <Route path='/admin/auth'><Redirect to="/admin/home" /></Route>
                             <Route path='/admin/tienda'  component={AdminTienda} />
                             <Route path='/admin/categorias-tienda'  component={AdminCategoriasTienda2} />
                             <Route path='/admin/productos-tienda'  component={AdminProductos} />
                             <Route path='/admin/envio'  component={AdminEnvio} />
+                            <Route path='/admin/preparar-envio'  component={PreparacionEnvio} />
                         </React.Fragment>
                     )
                 } else if (admin == false) {

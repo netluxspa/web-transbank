@@ -5,6 +5,12 @@ import uuid
 from django_cryptography.fields import encrypt
 from pag.models import UserPagina
 
+def get_or_none(classmodel, **kwargs):
+    try:
+        return classmodel.objects.get(**kwargs)
+    except classmodel.DoesNotExist:
+        return None
+
 def scramble_uploaded_filename(instanece, filename):
     extension = filename.split(".")[-1]
     return "{}.{}".format(uuid.uuid4(), extension)
@@ -150,11 +156,15 @@ class Transaction(models.Model):
 
     
 
+class Transportista(models.Model):
+    codigo = models.CharField(primary_key=True, max_length=100)
+
+
+
 class Pedido(models.Model):
     tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
     userPagina = models.ForeignKey(UserPagina, on_delete=models.CASCADE)
     fecha = models.DateTimeField(auto_now_add=True)
-    num_orden = models.IntegerField()
     codigo_seguimiento = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4)
     transaction = models.OneToOneField(Transaction, null=True, blank=True, on_delete=models.SET_NULL)
 
@@ -162,33 +172,37 @@ class Pedido(models.Model):
     lat = models.CharField(max_length=100)
     lng = models.CharField(max_length=100)
     numContact = models.CharField(max_length=100)
+    nombreReceptor = models.CharField(max_length=100)
+    
 
-    status = models.CharField(max_length=100, default='NOT_PAYED_YET')
+
+    seguimiento_externo = models.TextField(null=True, blank=True) 
+
+    transportista = models.ForeignKey(Transportista, null=True, on_delete=models.SET_NULL)
+
+    precio_envio = models.IntegerField(null=True, blank=True)
+
 
     def monto(self):
         monto = 0
         productos = ProductosPedido.objects.filter(pedido=self.id)
         for i in productos:
             monto += i.precio_pedido*i.cantidad
+            
         return monto
+    
+        
 
-
-    class Meta:
-        unique_together = (('num_orden', 'tienda'),) 
-        index_together = (('num_orden', 'tienda'),)
-
-    def save(self, *args, **kwargs):
-        if (self.id == None):
-            try:
-                last_num_orden = Pedido.objects.filter(tienda=self.tienda).latest('num_orden').num_orden
-            except:
-                last_num_orden = 0
-            self.num_orden = last_num_orden + 1
-        super(Pedido, self).save(*args, **kwargs)
 
 
 class Envio(models.Model):
-    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    fecha = models.DateField()
+    descripcion = models.TextField(null=True, blank=True)
+
+class EnvioPedido(models.Model):
+    envio = models.ForeignKey(Envio, on_delete=models.CASCADE, related_name='pedidos')
+    pedido = models.OneToOneField(Pedido, on_delete=models.CASCADE, related_name='envio')
+    status = models.BooleanField(default=None, null=True, blank=True)
 
 
 

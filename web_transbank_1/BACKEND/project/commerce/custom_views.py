@@ -28,6 +28,9 @@ import requests
 import json
 
 
+from .envio_views import calulateEnvioCost
+
+
 def get_or_none(classmodel, **kwargs):
     try:
         return classmodel.objects.get(**kwargs)
@@ -35,117 +38,144 @@ def get_or_none(classmodel, **kwargs):
         return None
 
 
+def validateUser(site, userkey):
+    token = get_or_none(TokenUserPagina, token=userkey)
+    if token:
+        if token.userPagina.pagina.codigo == site:
+            return {"status": True, "data": token.userPagina}
+        else:
+            return {"status": False}
+    else:
+        return {"status": False}
+
+
+def validateData(fields, data):
+    errors = {}
+    status = True
+    for i in fields:
+        try:
+            data[i]
+        except:
+            if status:
+                status = False
+            errors[i]=['Falta este campo']
+    return {"status": status, "errors": errors}
+
+
+def verifyProductos(productos):
+    if isinstance(productos, list):
+        response = []
+        for p in productos:
+            producto = get_or_none(Producto, id=p["producto"])
+            if producto and p["cantidad"]:
+                response.append({"producto": producto, "cantidad": p["cantidad"]})
+            else:
+                return {"status":False, "errors": ["Error de formato del conjunto de productos"]}
+        return {"status": True, "data": response}
+    else:
+        return {"status":False, "errors": ["Error de formato del conjunto de productos"]}
+
+
+
 @api_view(['POST'])
-def transaccionCreate(request):
-    pagina = get_or_none(Pagina, codigo=request.META.get('HTTP_SITE'))
-    if pagina:
-        tienda = get_or_none(Tienda, pagina=pagina)
-        if tienda:
-            token = get_or_none(TokenUserPagina, token=request.META.get('HTTP_USERKEY'))
-            if token:
-                user = token.userPagina
-                if user.pagina.codigo == pagina.codigo:
-                    try:
-                        envio = request.data['envio']
-                    except:
-                        envio = False
+def pagar(request):
 
-                    if envio:
-                        try:
-                            valid_address = envio["valid_address"]
-                            numContact = envio["numContact"]
-                            lat = envio["lat"]
-                            lng = envio["lng"]
-                            
-                            envio_data = True
-                        except:
-                            envio_data = False 
-                        if envio_data:
-                            try:
-                                productos = request.data["productos"]
-                            except:
-                                productos = False 
+    try:
+        isValidUser = validateUser(request.META.get('HTTP_SITE'), request.META.get('HTTP_USERKEY'))
+    except:
+        isValidUser = False
+    
 
+    if isValidUser["status"]:
+        validData = validateData(["productos", "envio"], request.data)
 
-                            if productos:
-                                list_productos = []
-                                for p in productos:
-                                    try:
-                                        verify_producto = Producto.objects.get(id=p["producto"], tienda=tienda)
-                                    except:
-                                        verify_producto = False 
+        if validData["status"]:
+            
+            envio = request.data["envio"]
+            
+            validEnvio = validateData(["valid_address", "lat", "lng", "numContact", "destino_starken", "nombreReceptor"], envio)
+            
+            if validEnvio["status"]:
 
-                                    if verify_producto and p["cantidad"]:
-                                        list_productos.append({"producto": verify_producto, "cantidad": p["cantidad"]})
-                                    else:
-                                        return Response({'error': 'Información inválida'}, status=status.HTTP_400_BAD_REQUEST)
+                productos = request.data["productos"]
 
+                verify_productos = verifyProductos(productos)
+
+                if verify_productos["status"]:
+
+                    envio_cost = calulateEnvioCost(envio["lat"], envio["lng"], request.META.get('HTTP_SITE'), envio["destino_starken"], productos)
+                    if envio_cost["status"]:
+                        transportista = get_or_none(Transportista, codigo=envio_cost["transportista"])
+                        if transportista:
+                            tienda = get_or_none(Tienda, pagina__codigo=request.META.get('HTTP_SITE'))
+                            if tienda:
                                 if tienda.codigo_comercio and tienda.llave_secreta:
-                                    new_pedido = Pedido.objects.create(tienda=tienda, userPagina=user, numContact=numContact, valid_address=valid_address, lat=lat, lng=lng)
+                                    new_pedido = Pedido.objects.create(tienda=tienda, userPagina=isValidUser["data"], numContact=envio["numContact"], nombreReceptor=envio["nombreReceptor"], transportista=transportista, valid_address=envio["valid_address"], lat=envio["lat"], lng=envio["lng"], precio_envio=int(envio_cost["precio"]))
                                     new_pedido.save()
 
-                                    amount = 0
-
-                                    for p in list_productos:
+                                    amount = int(envio_cost["precio"])
+                                    
+                                    for p in verify_productos["data"]:
                                         amount += p["producto"].precio*p["cantidad"]
                                         new_producto_pedido = ProductosPedido.objects.create(
                                             pedido=new_pedido, producto=p["producto"], cantidad=p["cantidad"]
                                             )
                                         new_producto_pedido.save()
-                                    
-                                    # session_id = json.dumps({"pagina": pagina.codigo, "cod_seg": str(new_pedido.codigo_seguimiento)})
-                                    # print(type(session_id))
-                                    url = "https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.0/transactions/"
-
-                                    data_set = {
-                                        "buy_order": new_pedido.num_orden,
-                                        "session_id": pagina.codigo,
-                                        "amount": amount,
-                                        "return_url": "http://localhost:8000/commerce/return-transbank/?codigo_seguimiento=" + str(new_pedido.codigo_seguimiento) + "&tienda=" + pagina.codigo,
-                                        }
-                                    headers = {
-                                        "Tbk-Api-Key-Id": tienda.codigo_comercio,
-                                        "Tbk-Api-Key-Secret": tienda.llave_secreta,
-                                        "Content-Type": "application/json",
-                                        }
-
-                                    json_dump = json.dumps(data_set)
-                                    
-                                    r = requests.post(url, data=json_dump, headers=headers)
-                                    print('createtransaction', r)
-                                    new_pedido.token_ws = r.json()["token"]
-                                    new_pedido.save()
-                                    return Response(r.json())
-
-                                else:
-                                    return Response({"error": "Credenciales de comercio no ingresadas."})
-
+                                    transaction = createTransaction(amount, new_pedido)
+                                    if transaction["status"]:
+                                        return Response(transaction["data"])
+                                    else:
+                                        return Response(transaction["errors"], status=status.HTTP_400_BAD_REQUEST)
                             else:
-                                return Response({'error': 'Información inválida '}, status=status.HTTP_400_BAD_REQUEST)
-
-
+                                return Response({"envio": ["No fue posible determinar la tienda"]}, status=status.HTTP_400_BAD_REQUEST)
                         else:
-                            return Response({'error': 'Información inválida de envio'}, status=status.HTTP_400_BAD_REQUEST)
-
-                        
+                            return Response({"envio": ["No fue posible determinar al transportista"]}, status=status.HTTP_400_BAD_REQUEST)
                     else:
-                        return Response({'error': 'Información inválida de envio'}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response(envio_cost["error"], status=status.HTTP_400_BAD_REQUEST)
+                    
+
                 else:
-                     return Response({'error': 'Error en la autenticación.'}, status=status.HTTP_400_BAD_REQUEST)
-
+                    return Response(verify_productos["errors"], status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({'error': 'Error en la autenticación.'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
+                return Response(validEnvio["errors"], status=status.HTTP_400_BAD_REQUEST)
+        
         else:
-            return Response({'error': 'Error de sistema'}, status=status.HTTP_400_BAD_REQUEST)
-
-
+            return Response(validData["errors"], status=status.HTTP_400_BAD_REQUEST)
+        
     else:
-        return Response({'error': 'Error de sistema'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": ["Credenciales incorrectas"]}, status=status.HTTP_403_FORBIDDEN)
 
+    
+
+
+
+
+def createTransaction(amount, pedido):
+    url = "https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.0/transactions"
+
+    data_set = {
+        "buy_order": pedido.id,
+        "session_id": pedido.tienda.pagina.codigo,
+        "amount": amount,
+        "return_url": "http://localhost:8000/commerce/return-transbank/?codigo_seguimiento=" + str(pedido.codigo_seguimiento) + "&tienda=" + pedido.tienda.pagina.codigo,
+        }
+    headers = {
+        "Tbk-Api-Key-Id": pedido.tienda.codigo_comercio,
+        "Tbk-Api-Key-Secret": pedido.tienda.llave_secreta,
+        "Content-Type": "application/json",
+        }
+
+    json_dump = json.dumps(data_set)
+    try:
+        r = requests.post(url, data=json_dump, headers=headers)
+        if r.status_code == 200:
+            return {"status": True, "data": r.json()}
+        else:
+            return {"status": False, "errors": {"transaction":["Error al conectar con transbank"]}}
+    except:
+        return {"status": False, "errors": {"transaction":["Error al conectar con transbank"]}}
+    
 
 
 @api_view(['POST'])
@@ -189,18 +219,20 @@ def return_transbank(request):
     return redirect('http://' + tienda + '/tienda/seguimiento/' + codigo_seguimiento)
 
 def transaction_status(token, codigo_seguimiento):
+    print('token', token)
     try:
         tienda = Pedido.objects.get(codigo_seguimiento=codigo_seguimiento).tienda
     except:
         tienda = False
     if tienda and tienda.codigo_comercio and tienda.llave_secreta:
-        url = "https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.0/transactions/" + token + "/"
+        url = "https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.0/transactions/" + str(token) 
         headers = {
             "Tbk-Api-Key-Id": tienda.codigo_comercio,
             "Tbk-Api-Key-Secret": tienda.llave_secreta,
             "Content-Type": "application/json",
             }
         r = requests.put(url, headers=headers)
+        print('response', r.json())
         if r.status_code == 200:
             try:
                 pedido = Pedido.objects.get(codigo_seguimiento=codigo_seguimiento)
@@ -234,19 +266,17 @@ def transaction_status(token, codigo_seguimiento):
                 new_transaction.installments_number=r.json()["installments_number"]
                 new_transaction.save()
                 pedido.transaction = new_transaction
-                if new_transaction.response_code == 0:
-                    pedido.status = 'PENDING'
-                else:
-                    pedido.status = 'FAILED_PAYMENT'
                 pedido.save()
 
-        if r.json()["response_code"] == 0:
-            sendEmailToComprador(codigo_seguimiento)
-            sendEmailToVendedor(codigo_seguimiento)
+            if r.json()["response_code"] == 0:
+                sendEmailToComprador(codigo_seguimiento)
+                sendEmailToVendedor(codigo_seguimiento)
 
-        return r.json()
+            return r.json()
+        else:
+            return None
     else:
-        return 'error'
+        return None
 
 
 

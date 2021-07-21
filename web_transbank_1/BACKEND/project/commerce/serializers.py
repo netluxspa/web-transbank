@@ -106,12 +106,25 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+class EnvioPedidoSerializer(serializers.ModelSerializer):   
+    class Meta:
+        model = EnvioPedido
+        fields = '__all__'
+
+class EnvioSerializer(serializers.ModelSerializer):   
+    class Meta:
+        model = Envio
+        fields = '__all__'
+
+
 class PedidoSerializer(serializers.ModelSerializer):   
     transaction =  TransactionSerializer(many=False, read_only=True)
     productos = ProductoPedidoSerializer(many=True, required=False)
     class Meta:
         model = Pedido
-        fields =  ('id', 'tienda', 'userPagina', 'fecha', 'num_orden', 'codigo_seguimiento', 'productos', 'transaction', 'valid_address', 'numContact', 'lng', 'lat', 'status', 'monto',)
+        fields =  ('id', 'tienda', 'userPagina', 'fecha',  'codigo_seguimiento', 'productos', 'transaction', 'valid_address', 'numContact', 'transportista', 'nombreReceptor', 'precio_envio', 'lng', 'lat', 'monto',  'envio',)
+        # fields = '__all__'
 
 
 

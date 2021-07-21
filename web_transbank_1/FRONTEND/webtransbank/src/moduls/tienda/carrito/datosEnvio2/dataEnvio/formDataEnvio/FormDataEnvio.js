@@ -34,7 +34,7 @@ class FormDataEvio  extends React.Component {
 
     render() {
         const { openSelectorCity} = this.state
-        const {calle, numCalle, detalle, ciudad, numContacto} = this.props.data
+        const {calle, numCalle, detalle, ciudad, numContacto, nombreReceptor} = this.props.data
         return (
             <div style={classes.contForm}>
                 <div style={classes.contItem}>
@@ -108,6 +108,17 @@ class FormDataEvio  extends React.Component {
                 </div>
                 <br></br>
                 <br></br>
+                <br></br>
+
+                <Typography variant='h5' color='textPrimary'>Datos del receptor</Typography>
+                
+                <div style={classes.contItem}>
+                    <TextField  onChange={e=>{this.sendData({nombreReceptor: e.target.value})}}
+                                value={nombreReceptor}
+                                style={{width: '100%'}} 
+                                label="Nombre del receptor" type='text' />
+                </div>
+
 
                 <div style={classes.contItem}>
                     <TextField  onChange={e=>{this.sendData({numContacto: e.target.value})}}

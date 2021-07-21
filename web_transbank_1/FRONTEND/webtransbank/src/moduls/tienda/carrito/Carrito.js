@@ -27,7 +27,8 @@ class Carrito extends React.Component {
             url: null,
             token: null,
             errorEnvio: '',
-            errorsPago: {}
+            errorsPago: {},
+            errorsApiPagar: {}
         }
         window.scrollTo(0, 0);
     }
@@ -44,7 +45,7 @@ class Carrito extends React.Component {
         const keys = Object.keys(errors)
         return (
         keys.map(k=>(
-            <div>
+            <div key={k}>
                 {errors[k].map(e=>(
 
                     <Alert severity="error">{k} - {e}</Alert>
@@ -62,6 +63,9 @@ class Carrito extends React.Component {
         }
         if (!adress.dataForm.numContacto){
             new_errors_pago.numero = ['Debe ingresar un número de contacto asociado a la entrega.'];
+        }
+        if (!adress.dataForm.nombreReceptor){
+            new_errors_pago.receptor = ['Debe ingresar un receptor asociado a la entrega.'];
         }
         this.setState({
             errorsPago: new_errors_pago
@@ -98,9 +102,11 @@ class Carrito extends React.Component {
 
        const envio = {
         valid_address:  this.props.adress.validAdress,
+        destino_starken : this.props.adress.dataForm.ciudad.code_dls,
         lat:  this.props.adress.lat,
         lng:  this.props.adress.lng,
-        numContact: this.props.adress.dataForm.numContacto
+        numContact: this.props.adress.dataForm.numContacto,
+        nombreReceptor: this.props.adress.dataForm.nombreReceptor,
        }
        productos = productos.map(p=>{
            return {producto: p.producto, cantidad: p.cantidad}
@@ -111,7 +117,7 @@ class Carrito extends React.Component {
             envio: envio,
        }
         const headers = {headers: {"Content-Type":"application/json", "site":localStorage.getItem('site'), "userkey": localStorage.getItem('userkey')}}
-        api.post('/commerce/crear-transaccion/', 
+        api.post('/commerce/pagar/', 
             body,
             headers
         ).then(res=>{
@@ -120,6 +126,11 @@ class Carrito extends React.Component {
                 this.setState({url, token})
             }
             
+        }).catch(err=>{
+            console.log(err.response)
+            if (err && err.response && err.response.data){
+                this.setState({errorsApiPagar: err.response.data})
+            }
         })
     }
 
@@ -165,6 +176,9 @@ class Carrito extends React.Component {
                           
                             <div style={{marginTop: "20px"}}>
                                 { this.renderErrors(this.state.errorsPago) } 
+                            </div>
+                            <div style={{marginTop: "20px"}}>
+                                { this.renderErrors(this.state.errorsApiPagar) } 
                             </div>
                             <div className='botonPagar'>
 

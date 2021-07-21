@@ -3,7 +3,9 @@ from django.urls import path, include
 from .views import *
 from .custom_views import *
 from .envio_views import *
+from .adminPedidosViews import *
 from rest_framework import routers
+
 
 router = routers.DefaultRouter()
 
@@ -23,6 +25,10 @@ router.register('imagen', ImagenViewSet)
 router.register('texto', TextoProductoViewSet)
 router.register('parrafo', ParrafoViewSet)
 router.register('pedido', PedidoViewSet)
+router.register('envio', EnvioViewSet)
+router.register('envio-pedido', EnvioPedidoViewSet)
+
+
 # router.register('producto-pedido', ProductosPedidoViewSet)
 
 
@@ -32,10 +38,11 @@ router.register('pedido', PedidoViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('crear-transaccion/', transaccionCreate, name='test-view'),
+    path('pagar/', pagar, name='test-view'),
     path('return-transbank/', return_transbank, name='return-transbank'),
     path('get-city/', getCity, name='get-city'),
     path('get-envio-cost/', getEnvioCost, name='get-envio-cost'),
+    path('get-resumen-pedido/', getResumenPedido, name='get-resumen-pedido'),
 
 
     

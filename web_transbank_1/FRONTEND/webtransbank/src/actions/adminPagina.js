@@ -22,7 +22,7 @@ export const logoutAdmin = () => dispatch => {
     ).then(res=>{
         if (res && res.data) {
             console.log(res)
-            dispatch({type: REMOVE_ADMIN_PAGINA, payload: res.data})
+            dispatch({type: REMOVE_ADMIN_PAGINA, payload: false})
         }
     })
 }

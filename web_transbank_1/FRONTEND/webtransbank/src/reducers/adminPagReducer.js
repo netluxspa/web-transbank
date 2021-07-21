@@ -7,7 +7,7 @@ const adminPaginaReducer = (state = null, action) => {
         case ADD_ADMIN_PAGINA:
             return action.payload;
         case REMOVE_ADMIN_PAGINA:
-            return null;
+            return false;
         default:
             return state;
     }

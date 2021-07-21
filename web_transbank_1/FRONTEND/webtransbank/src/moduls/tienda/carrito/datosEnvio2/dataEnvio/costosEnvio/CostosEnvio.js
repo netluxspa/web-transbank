@@ -1,6 +1,8 @@
 import React , { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
+import Alert from "@material-ui/lab/Alert";
+
 
 import api from '../../../../../../api';
 
@@ -36,7 +38,7 @@ class CostosEnvio extends React.Component {
                     distance:  newDistance
                 })
 
-                const productos = carrito.map(c=>({id: c.producto, cantidad: c.cantidad}))
+                const productos = carrito
                 this.getStarkenCosto(
                     tienda.config_logistica.starken_origen_code,
                     envio.dataForm.ciudad.code_dls,
@@ -73,6 +75,22 @@ class CostosEnvio extends React.Component {
                 this.setState({error505: 'Compruebe conexión a internet.'})
             }
         })
+    }
+
+
+    renderErrors = (errors) => {
+        const keys = Object.keys(errors)
+        return (
+        keys.map(k=>(
+            <div key={k}>
+                {errors[k].map(e=>(
+
+                    <Alert severity="error">{k} - {e}</Alert>
+
+                ))}
+            </div>
+        ))
+        )
     }
 
 
@@ -115,7 +133,7 @@ class CostosEnvio extends React.Component {
                             if (!errorApi && !error505 && !starken_cost){
                                 return 'Loading'
                             } else if(errorApi){
-                                return errorApi;
+                                return this.renderErrors(errorApi);
                             } else if (error505){
                                 return error505;
                             } else if (starken_cost){

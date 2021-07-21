@@ -9,6 +9,7 @@ import productoAdminReducer from './admin/productoAdminReducer';
 import imagenProductoSelectedReducer from './admin/imagenProductoSelectedReducer';
 import optionProductoAdminReducer from './admin/optionProductoAdminReducer';
 import tiendaReducer from './tiendaReducer';
+import gestionPedidosReducer from './gestionPedidosReducers/gestionPedidosReducers';
 
 
 export default combineReducers({
@@ -21,5 +22,6 @@ export default combineReducers({
     productoAdmin: productoAdminReducer,
     imagenProductoAdmin: imagenProductoSelectedReducer,
     optionProductoAdmin: optionProductoAdminReducer,
+    gestionPedidos: gestionPedidosReducer,
     form: formReducer
 });

@@ -2,12 +2,29 @@ import Panel from './Panel';
 import Modal from '../../../components/modal/Modal';
 import history from '../../../history';
 import { connect } from 'react-redux';
+import NotificationPedido from '../gestionPedidos/NotificationPedido';
 
-const AdminHome = ({admin}) => {
+const renderReturn = (match) => {
+    
+    return (
+        <div>
+            <div>
+                <NotificationPedido match={match} />
+            </div>
+            <br></br>
+            <br></br>
+            <div>
+                <Panel />
+            </div>
+        </div>
+    )
+}
+
+const AdminHome = ({admin, match}) => {
     if (admin){
         return (
         <Modal 
-        component={<Panel />} 
+        component={renderReturn(match)} 
         titulo={'Administración de la tienda'} 
         ondismiss={()=>history.goBack()}
     />
