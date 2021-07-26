@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator
 import uuid
 from django_cryptography.fields import encrypt
 from pag.models import UserPagina
+from django.db.models import Q
 
 def get_or_none(classmodel, **kwargs):
     try:
@@ -196,14 +197,37 @@ class Pedido(models.Model):
 
 
 class Envio(models.Model):
+    tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
     fecha = models.DateField()
     descripcion = models.TextField(null=True, blank=True)
 
+    @property
+    def status(self):
+        pedidos_envio = EnvioPedido.objects.filter(envio=self.id)
+        for p in pedidos_envio:
+            if p.status == None:
+                return False
+        return True
+
+    @property
+    def pedidos_pendientes(self):
+        pedidos_envio = len(EnvioPedido.objects.filter(envio=self.id, status=None))
+        return pedidos_envio
+    
+    @property
+    def pedidos_totales(self):
+        pedidos_envio = len(EnvioPedido.objects.filter(envio=self.id))
+        return pedidos_envio
+
+
+
+
 class EnvioPedido(models.Model):
-    envio = models.ForeignKey(Envio, on_delete=models.CASCADE, related_name='pedidos')
+    envio = models.ForeignKey(Envio, null=True, on_delete=models.CASCADE, related_name='pedidos')
     pedido = models.OneToOneField(Pedido, on_delete=models.CASCADE, related_name='envio')
     status = models.BooleanField(default=None, null=True, blank=True)
-
+    class Meta:
+        ordering = ('pedido__transportista__codigo',)
 
 
 class ProductosPedido(models.Model):

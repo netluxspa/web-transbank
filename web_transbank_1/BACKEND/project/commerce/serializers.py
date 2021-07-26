@@ -105,19 +105,6 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = '__all__'
 
-
-
-class EnvioPedidoSerializer(serializers.ModelSerializer):   
-    class Meta:
-        model = EnvioPedido
-        fields = '__all__'
-
-class EnvioSerializer(serializers.ModelSerializer):   
-    class Meta:
-        model = Envio
-        fields = '__all__'
-
-
 class PedidoSerializer(serializers.ModelSerializer):   
     transaction =  TransactionSerializer(many=False, read_only=True)
     productos = ProductoPedidoSerializer(many=True, required=False)
@@ -125,6 +112,29 @@ class PedidoSerializer(serializers.ModelSerializer):
         model = Pedido
         fields =  ('id', 'tienda', 'userPagina', 'fecha',  'codigo_seguimiento', 'productos', 'transaction', 'valid_address', 'numContact', 'transportista', 'nombreReceptor', 'precio_envio', 'lng', 'lat', 'monto',  'envio',)
         # fields = '__all__'
+
+
+class EnvioPedidoSerializer(serializers.ModelSerializer):  
+    pedido_detail = PedidoSerializer(source='pedido', many=False, read_only=True)
+    class Meta:
+        model = EnvioPedido
+        fields = '__all__'
+
+class EnvioSerializer(serializers.ModelSerializer):   
+    pedidos = EnvioPedidoSerializer(many=True, required=False)
+    class Meta:
+        model = Envio
+        fields = ('id', 'fecha', 'descripcion', 'pedidos', 'tienda', 'pedidos_pendientes', 'pedidos_totales',  )
+    
+    def create(self, validated_data):
+        pedidos_data = validated_data.pop('pedidos')
+        envio = Envio.objects.create(**validated_data)
+        for pedido_data in pedidos_data:
+            EnvioPedido.objects.create(envio=envio, **pedido_data)
+        return envio
+
+
+
 
 
 

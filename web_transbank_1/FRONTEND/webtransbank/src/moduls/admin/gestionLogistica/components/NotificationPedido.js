@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import api from "../../../api";
-import AdminHeaders from "../../../globalComponents/adminHeaders.js/AdminHeaders";
+import api from "../../../../api";
+import AdminHeaders from "../../../../globalComponents/adminHeaders.js/AdminHeaders";
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { Button, Typography } from "@material-ui/core";
 
-import history from "../../../history";
+import history from "../../../../history";
 
 const NotificationPedido = ({match}) => {
 
     useEffect(()=>{
-        console.log('match', match)
         getPedidosResumen();
         
     }, [])
@@ -93,11 +92,11 @@ const NotificationPedido = ({match}) => {
                                         return false
                                     }
                                 })(),
-                path: match.path + '/preparar-envio'
+                path: match.path + '/gestion-logistica/preparar-envio'
                     
             }, 
             {
-                title: 'Envios en camino', 
+                title: 'Envios en proceso', 
                 len: envios_pendientes,
                 severity: (()=>{
                                 if  (envios_pendientes == 0){
@@ -108,11 +107,11 @@ const NotificationPedido = ({match}) => {
                             })(),
                 messagge: (()=>{
                                 if (envios_pendientes == 0){
-                                    return 'No tienes envios en camino'
+                                    return 'No tienes envios en proceso'
                                 } else if(envios_pendientes == 1){
-                                    return `Tienes ${envios_pendientes} envio en camino`
+                                    return `Tienes ${envios_pendientes} envio en proceso`
                                 } else if (envios_pendientes > 1) {
-                                    return `Tienes ${envios_pendientes} envios en camino` 
+                                    return `Tienes ${envios_pendientes} envios en proceso` 
                                 }
                             })(),
                 button_title: 'Finalizar envíos',
@@ -123,7 +122,7 @@ const NotificationPedido = ({match}) => {
                                         return false
                                     }
                                 })(),
-                path: match.path + '/envio-module'
+                path: match.path + '/gestion-logistica/procesamiento-envio'
                     
             },
             {
@@ -190,125 +189,7 @@ const NotificationPedido = ({match}) => {
         ]
     }
 
-    const renderResumen = () => {
-        return (
-            <div style={{border: 'solid 1px rgba(128,128,128,0.5)', position: 'relative', borderRadius: '4px', padding: '6px 10px'}}>
-                        <div
-                            style={{background: 'white', position: 'absolute', top: '-0.7em', left: '0.7em'}}
-                        >
-                            <Typography 
-                                style={{fontSize:'0.8em'}}
-                                color='textSecondary'
-                            >Notificaciones logísticas</Typography>
-                        </div>
-           
-            <div
-                style={style.container}
-            >
-                <div style={style.item}>
-                    <Alert severity="warning">
-                        <AlertTitle>Pedidos pendientes</AlertTitle>
-                        {
-                            (()=>{
-                                if (pedidos.pendientes == 0){
-                                    return 'No tienes pedidos pendientes'
-                                } else if(pedidos.pendientes == 1){
-                                    return `Tienes ${pedidos.pendientes} pedido pendiente`
-                                } else if (pedidos.pendientes > 1) {
-                                    return `Tienes ${pedidos.pendientes} pedidos pendientes` 
-                                }
-                            })()
-                        }
-                       
-                    </Alert>
-                    <br></br>
-                    <Button
-                            onClick = {()=>history.push('/admin/envio-module')}
-                            color='primary'
-                            size='small'
-                            variant='outlined'
-                        >Preparar un envío
-                    </Button>
-                </div>
-                <div style={style.item}>
-                    <Alert severity="warning">
-                        <AlertTitle>Envios en camino</AlertTitle>
-                        {
-                            (()=>{
-                                if (pedidos.envios_pendientes == 0){
-                                    return 'No tienes envios en camino'
-                                } else if(pedidos.envios_pendientes == 1){
-                                    return `Tienes ${pedidos.envios_pendientes} envio en camino`
-                                } else if (pedidos.envios_pendientes > 1) {
-                                    return `Tienes ${pedidos.envios_pendientes} envios en camino` 
-                                }
-                            })()
-                        }
-                    </Alert>
-                    <br></br>
-                    <Button
-                            
-                            color='primary'
-                            size='small'
-                            variant='outlined'
-                        >Reportar envios
-                    </Button>
-                </div>
-                <div style={style.item}>
-                    <Alert severity="error">
-                        <AlertTitle>Pedidos con problemas</AlertTitle>
-                        {
-                            (()=>{
-                                if (pedidos.erroneos == 0){
-                                    return 'No tienes pedidos con problemas'
-                                } else if(pedidos.erroneos == 1){
-                                    return `Tienes ${pedidos.erroneos} pedido con problemas`
-                                } else if (pedidos.erroneos > 1) {
-                                    return `Tienes ${pedidos.erroneos} pedidos con problemas` 
-                                }
-                            })()
-                        }
-                    </Alert>
-                    <br></br>
-                    <Button
-                            color='primary'
-                            size='small'
-                            variant='outlined'
-                        >revisar
-                    </Button>
-                </div>
-                <div style={style.item}>
-                    <Alert severity="success">
-                        <AlertTitle>Pedidos completados</AlertTitle>
 
-                        {
-                            (()=>{
-                                if (pedidos.completados == 0){
-                                    return 'No tienes pagos completados'
-                                } else if(pedidos.completados == 1){
-                                    return `Tienes ${pedidos.completados} pedido completado`
-                                } else if (pedidos.completados > 1) {
-                                    return `Tienes ${pedidos.completados} pedidos completados` 
-                                }
-                            })()
-                        }
-
-                      
-                    </Alert>
-                    <br></br>
-                    <Button
-                            color='primary'
-                            size='small'
-                            variant='outlined'
-                        >Ver historial
-                    </Button>
-                </div>
-
-                </div>
-
-            </div>
-        )
-    }
 
     const renderResumen2 = () => {
         return (

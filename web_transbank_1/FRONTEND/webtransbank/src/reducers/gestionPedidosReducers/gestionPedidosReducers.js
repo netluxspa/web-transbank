@@ -1,4 +1,4 @@
-import { CLICK_ONE_PEDIDO, CLICK_ALL_PEDIDOS, ADD_PEDIDOS } from '../../actions/types'
+import { CLICK_ONE_PEDIDO, CLICK_ALL_PEDIDOS, ADD_PEDIDOS, REMOVE_ALL_PEDIDOS } from '../../actions/types'
 
 
 
@@ -30,7 +30,6 @@ const gestionPedidosReducer = (state = initialState, action) => {
             }
 
             return {...state, pedidosPendientes: {...state.pedidosPendientes, data: pedidos_pendientes, allSelected: false}}
-
         case CLICK_ALL_PEDIDOS:
                 return {
                     ...state, 
@@ -39,6 +38,9 @@ const gestionPedidosReducer = (state = initialState, action) => {
                         allSelected: !state.pedidosPendientes.allSelected
                      }
                     }
+        case REMOVE_ALL_PEDIDOS:
+            return initialState
+        
         default:
             return state;
     }

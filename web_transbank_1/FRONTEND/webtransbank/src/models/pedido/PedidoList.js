@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 
-import api from "../../../../../api";
-import AdminHeaders from "../../../../../globalComponents/adminHeaders.js/AdminHeaders";
+import api from "../../api";
+import AdminHeaders from "../../globalComponents/adminHeaders.js/AdminHeaders";
 
 import TablaPedidos from "./components/TablePedidos";
 
 
 const PedidoList = ({filters, sendData, selectors, pedidos, sendPedidos, sellectAll, allSelected}) => {
 
-    // const [pedidos, setPedidos] = useState(null)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
 
     useEffect(()=>{
         if (!pedidos) {
@@ -19,6 +18,7 @@ const PedidoList = ({filters, sendData, selectors, pedidos, sendPedidos, sellect
 
 
     const getPedidos = filters => {
+        setLoading(true)
         api.get('/commerce/pedido/', 
             {
                 params: filters

@@ -7,9 +7,10 @@ import AdminProductos from './adminProductos/AdminProductos'
 import AdminAuth from './adminAuth/AdminAuth';
 import AdminEnvio from './adminEnvio/AdminEnvio';
 
-import EnvioCrud from './gestionPedidos/adminPedidos/envioCrud/EnvioCrud';
 
-import PreparacionEnvio from './gestionPedidos/adminPedidos/preparacionEnvio/PreparacionEnvio';
+import GestionLogisticaModule from './gestionLogistica/GestionLogisticaModule';
+
+import PreparacionEnvio from './gestionLogistica/gestionEnvios/preparacionEnvio/PreparacionEnvio';
 
 import React from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -60,7 +61,7 @@ const Admin = ({admin, tienda}) => {
                             <Route path='/admin/categorias-tienda'  component={AdminCategoriasTienda2} />
                             <Route path='/admin/productos-tienda'  component={AdminProductos} />
                             <Route path='/admin/envio'  component={AdminEnvio} />
-                            <Route path='/admin/preparar-envio'  component={PreparacionEnvio} />
+                            <Route path='/admin/gestion-logistica'  component={GestionLogisticaModule} />
                         </React.Fragment>
                     )
                 } else if (admin == false) {

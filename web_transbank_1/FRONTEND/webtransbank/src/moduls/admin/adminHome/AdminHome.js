@@ -2,7 +2,7 @@ import Panel from './Panel';
 import Modal from '../../../components/modal/Modal';
 import history from '../../../history';
 import { connect } from 'react-redux';
-import NotificationPedido from '../gestionPedidos/NotificationPedido';
+import NotificationPedido from '../gestionLogistica/components/NotificationPedido';
 
 const renderReturn = (match) => {
     

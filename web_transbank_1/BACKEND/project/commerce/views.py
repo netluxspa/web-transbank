@@ -6,6 +6,7 @@ from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
 from pag.permissions import OnlyAdminPerPag, OnlyCreatePerUserAndListPerUserAndAdminAndRetrievePerAll
+from django.db.models import Q
 
 class TiendaViewSet(viewsets.ModelViewSet):
     queryset = Tienda.objects.all()
@@ -72,23 +73,40 @@ class FormatoEnvioViewSet(viewsets.ModelViewSet):
     filter_fields = ('producto',)
 
 
-class PedidoFilter(filters.FilterSet):
-    no_envio = filters.BooleanFilter(field_name='envio', lookup_expr='isnull')
+class EnvioFilter(filters.FilterSet):
+    nochecked = filters.BooleanFilter(field_name='pedidos__status', lookup_expr='isnull')
 
     class Meta:
-        model=Pedido
-        fields=('codigo_seguimiento', 'tienda__pagina__codigo', 'transaction__response_code', 'userPagina', 'envio', 'no_envio')
+        model=Envio
+        fields=('tienda__pagina__codigo', 'nochecked', 'pedidos__pedido__transaction__response_code', )
     
 
 
 class EnvioViewSet(viewsets.ModelViewSet):
     queryset = Envio.objects.all()
     serializer_class = EnvioSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = EnvioFilter
+
+    def get_queryset(self):
+        return self.queryset.distinct()
+
 
 
 class EnvioPedidoViewSet(viewsets.ModelViewSet):
     queryset = EnvioPedido.objects.all()
     serializer_class = EnvioPedidoSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('envio',)
+
+
+class PedidoFilter(filters.FilterSet):
+    no_envio = filters.BooleanFilter(field_name='envio', lookup_expr='isnull')
+
+    class Meta:
+        model=Pedido
+        fields=('codigo_seguimiento', 'tienda__pagina__codigo', 'transaction__response_code', 'userPagina', 'envio__envio', 'no_envio')
+    
 
 
 class PedidoViewSet(viewsets.ModelViewSet):
